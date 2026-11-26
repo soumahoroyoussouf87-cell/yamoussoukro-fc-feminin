@@ -1,0 +1,162 @@
+import {
+  Activity, BarChart3, Bell, Bot, BookOpen, Brain, Calendar, CalendarDays, CalendarRange, ClipboardCheck,
+  ClipboardList, Clapperboard, Database, Dumbbell, FileText, Flag, FolderLock, Gauge, Goal, HeartPulse,
+  KeyRound, LayoutDashboard, ListChecks, ListTodo, type LucideIcon, Map, Medal, MonitorPlay, Network,
+  PlaySquare, Repeat, ScrollText, Settings, Shield, ShieldCheck, Shirt, Sparkles, Stethoscope, Swords,
+  Target, Timer, Trophy, UserCheck, UserCog, Users, Video,
+} from "lucide-react";
+
+export type NavItem = {
+  label: string;
+  icon: LucideIcon;
+  /** Présent uniquement si l'écran est réellement opérationnel. */
+  href?: string;
+  /** Phase de la roadmap qui livre l'écran. */
+  phase: number;
+  /** Permission requise pour afficher l'entrée (si opérationnelle). */
+  permission?: string;
+};
+
+export type NavSection = { title: string; items: NavItem[] };
+
+export const NAVIGATION: NavSection[] = [
+  {
+    title: "Pilotage",
+    items: [
+      { label: "Tableau de bord", icon: LayoutDashboard, href: "/tableau-de-bord", phase: 1, permission: "dashboard.read" },
+      { label: "Agenda", icon: Calendar, phase: 2 },
+      { label: "Notifications", icon: Bell, href: "/notifications", phase: 1 },
+      { label: "Tâches du staff", icon: ListTodo, phase: 2 },
+    ],
+  },
+  {
+    title: "Management",
+    items: [
+      { label: "Effectif", icon: Users, href: "/effectif", phase: 1, permission: "players.read" },
+      { label: "Staff technique", icon: UserCog, href: "/staff", phase: 1, permission: "staff.read" },
+      { label: "Disponibilité des joueuses", icon: UserCheck, href: "/disponibilites", phase: 1, permission: "availability.read" },
+      { label: "Documents administratifs", icon: FolderLock, href: "/documents", phase: 1, permission: "players.documents.read" },
+    ],
+  },
+  {
+    title: "Planification",
+    items: [
+      { label: "Calendrier de la saison", icon: CalendarRange, phase: 2 },
+      { label: "Macrocycles", icon: Repeat, phase: 2 },
+      { label: "Mésocycles", icon: Repeat, phase: 2 },
+      { label: "Microcycles", icon: Repeat, phase: 2 },
+      { label: "Programme hebdomadaire", icon: CalendarDays, phase: 2 },
+    ],
+  },
+  {
+    title: "Entraînement",
+    items: [
+      { label: "Fiches de séance", icon: ClipboardList, phase: 2 },
+      { label: "Bibliothèque d'exercices", icon: BookOpen, phase: 2 },
+      { label: "Présences", icon: ListChecks, phase: 2 },
+      { label: "Évaluation des séances", icon: ClipboardCheck, phase: 2 },
+      { label: "Séances vidéo", icon: MonitorPlay, phase: 4 },
+    ],
+  },
+  {
+    title: "Compétition",
+    items: [
+      { label: "Calendrier des rencontres", icon: CalendarDays, phase: 2 },
+      { label: "Match Center", icon: Trophy, phase: 2 },
+      { label: "Convocations", icon: FileText, phase: 2 },
+      { label: "Onze de départ", icon: Shirt, phase: 2 },
+      { label: "Délégations", icon: Users, phase: 2 },
+      { label: "Résultats", icon: Flag, phase: 2 },
+      { label: "Classement", icon: Medal, phase: 2 },
+      { label: "Statistiques", icon: BarChart3, phase: 2 },
+    ],
+  },
+  {
+    title: "Tactique",
+    items: [
+      { label: "Projet de jeu", icon: Shield, phase: 3 },
+      { label: "Systèmes de jeu", icon: Network, phase: 3 },
+      { label: "Tableau tactique", icon: Map, phase: 3 },
+      { label: "Principes et sous-principes", icon: ScrollText, phase: 3 },
+      { label: "Analyse des adversaires", icon: Swords, phase: 3 },
+      { label: "Coups de pied arrêtés", icon: Flag, phase: 3 },
+    ],
+  },
+  {
+    title: "Performance",
+    items: [
+      { label: "Performance individuelle", icon: Gauge, phase: 3 },
+      { label: "Performance sectorielle", icon: Gauge, phase: 3 },
+      { label: "Performance intersectorielle", icon: Network, phase: 3 },
+      { label: "Performance collective", icon: Users, phase: 3 },
+      { label: "Tests techniques", icon: Timer, phase: 3 },
+      { label: "Référentiels d'évaluation", icon: ScrollText, phase: 3 },
+    ],
+  },
+  {
+    title: "Analyse vidéo",
+    items: [
+      { label: "Vidéothèque individuelle", icon: Video, phase: 4 },
+      { label: "Vidéothèque sectorielle", icon: Video, phase: 4 },
+      { label: "Vidéothèque collective", icon: Video, phase: 4 },
+      { label: "Vidéothèque des entraînements", icon: Video, phase: 4 },
+      { label: "Analyse adverse", icon: Swords, phase: 4 },
+      { label: "Codification", icon: Clapperboard, phase: 4 },
+      { label: "Playlists", icon: PlaySquare, phase: 4 },
+      { label: "Comparaison vidéo", icon: MonitorPlay, phase: 4 },
+      { label: "Bibliothèque tactique", icon: BookOpen, phase: 4 },
+    ],
+  },
+  {
+    title: "Développement",
+    items: [
+      { label: "Plans individuels", icon: Target, phase: 4 },
+      { label: "Plans sectoriels", icon: Target, phase: 4 },
+      { label: "Plans collectifs", icon: Target, phase: 4 },
+      { label: "Objectifs", icon: Goal, phase: 4 },
+      { label: "Exercices correctifs", icon: Dumbbell, phase: 4 },
+      { label: "Réévaluations", icon: Repeat, phase: 4 },
+    ],
+  },
+  {
+    title: "Sport science",
+    items: [
+      { label: "Tests physiques", icon: Timer, phase: 5 },
+      { label: "Données GPS", icon: Activity, phase: 5 },
+      { label: "Charges d'entraînement", icon: Dumbbell, phase: 5 },
+      { label: "Récupération", icon: HeartPulse, phase: 5 },
+      { label: "Disponibilité médicale", icon: Stethoscope, phase: 5 },
+    ],
+  },
+  {
+    title: "Intelligence artificielle",
+    items: [
+      { label: "Assistant du staff", icon: Bot, phase: 6 },
+      { label: "Analyse des performances", icon: Brain, phase: 6 },
+      { label: "Recommandations", icon: Sparkles, phase: 6 },
+      { label: "Rapports intelligents", icon: FileText, phase: 6 },
+    ],
+  },
+  {
+    title: "Rapports",
+    items: [
+      { label: "Rapports individuels", icon: FileText, phase: 3 },
+      { label: "Rapports sectoriels", icon: FileText, phase: 3 },
+      { label: "Rapports collectifs", icon: FileText, phase: 3 },
+      { label: "Rapports de match", icon: FileText, phase: 2 },
+      { label: "Bilans périodiques", icon: FileText, phase: 3 },
+      { label: "Documents officiels", icon: FileText, phase: 2 },
+    ],
+  },
+  {
+    title: "Administration",
+    items: [
+      { label: "Utilisateurs", icon: Users, href: "/administration/utilisateurs", phase: 1, permission: "users.manage" },
+      { label: "Rôles", icon: ShieldCheck, href: "/administration/roles", phase: 1, permission: "roles.read" },
+      { label: "Permissions", icon: KeyRound, href: "/administration/roles#matrice", phase: 1, permission: "roles.read" },
+      { label: "Paramètres", icon: Settings, href: "/administration/parametres", phase: 1, permission: "settings.manage" },
+      { label: "Sauvegardes", icon: Database, href: "/administration/sauvegardes", phase: 1, permission: "backups.manage" },
+      { label: "Journal d'activité", icon: ScrollText, href: "/administration/journal", phase: 1, permission: "audit.read" },
+    ],
+  },
+];

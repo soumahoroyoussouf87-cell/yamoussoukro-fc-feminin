@@ -1,26 +1,148 @@
 @import "tailwindcss";
 
+/* =============================================================================
+   YFC HIGH PERFORMANCE CENTER — Design tokens
+   Palette officielle (cahier des charges §3). Voir docs/DESIGN_SYSTEM.md.
+   ============================================================================= */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Palette officielle — ne pas modifier */
+  --yfc-royal: #063580;
+  --yfc-night: #07162e;
+  --yfc-fuchsia: #ff0068;
+  --yfc-white: #ffffff;
+  --yfc-grey-light: #f4f6fa;
+  --yfc-slate: #64748b;
+  --yfc-green: #22c55e;
+  --yfc-orange: #f59e0b;
+  --yfc-red: #ef4444;
+
+  /* Thème clair */
+  --background: var(--yfc-grey-light);
+  --foreground: #0b1730;
+  --card: var(--yfc-white);
+  --card-foreground: #0b1730;
+  --muted: #e9edf5;
+  --muted-foreground: var(--yfc-slate);
+  --border: #dde3ee;
+  --input: #cfd7e6;
+  --ring: var(--yfc-royal);
+  --primary: var(--yfc-fuchsia);
+  --primary-foreground: var(--yfc-white);
+  --primary-text: #d1005a;   /* fuchsia assombri pour le TEXTE sur fond clair (AA 4.5:1) */
+  --secondary: var(--yfc-royal);
+  --secondary-foreground: var(--yfc-white);
+  --accent: #e6ecf8;
+  --accent-foreground: var(--yfc-royal);
+  --success: #15803d;   /* vert assombri pour le texte sur fond clair (AA) */
+  --warning: #b45309;   /* orange assombri pour le texte sur fond clair (AA) */
+  --danger: #dc2626;
+  --sidebar: var(--yfc-night);
+  --sidebar-foreground: #e2e8f0;
+  --sidebar-muted: #94a3b8;
+  --sidebar-active: rgba(255, 0, 104, 0.14);
+  --hero-from: var(--yfc-night);
+  --hero-to: var(--yfc-royal);
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: #050f22;
+  --foreground: #f1f5fb;
+  --card: #0a1d3a;
+  --card-foreground: #f1f5fb;
+  --muted: #0f2547;
+  --muted-foreground: #94a3b8; /* ardoise éclaircie : contraste AA sur fond nuit */
+  --border: rgba(148, 163, 184, 0.16);
+  --input: rgba(148, 163, 184, 0.28);
+  --ring: var(--yfc-fuchsia);
+  --primary-text: #ff5c9d;   /* fuchsia éclairci pour le TEXTE sur fond sombre (AA) */
+  --accent: #10284d;
+  --accent-foreground: #f1f5fb;
+  --success: var(--yfc-green);
+  --warning: var(--yfc-orange);
+  --danger: #f87171;
+  --sidebar: var(--yfc-night);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-text: var(--primary-text);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-royal: var(--yfc-royal);
+  --color-night: var(--yfc-night);
+  --color-fuchsia: var(--yfc-fuchsia);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-barlow), "Arial Narrow", ui-sans-serif, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .hero-gradient {
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(255, 0, 104, 0.18) 0%, transparent 45%),
+      linear-gradient(120deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  }
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

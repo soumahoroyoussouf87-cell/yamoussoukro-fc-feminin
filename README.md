@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# YAMOUSSOUKRO FC FÉMININ — HIGH PERFORMANCE CENTER
 
-## Getting Started
+**OBSERVER • ÉVALUER • PLANIFIER • DÉVELOPPER • PERFORMER**
 
-First, run the development server:
+Plateforme interne, confidentielle et sécurisée de management et de développement de la performance du Yamoussoukro FC Féminin. Ce n'est pas un site public.
+
+- État : **Phase 1 — Foundation** livrée (voir `CHANGELOG.md` et `docs/ROADMAP.md`).
+- Dossier de conception : `docs/DOSSIER_CONCEPTION.md`.
+
+## Démarrage local
+
+Prérequis : Node.js 22+, Docker.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npx supabase start            # Postgres, Auth, Storage, Mailpit en local
+npx supabase db reset         # applique supabase/migrations + supabase/seed.sql
+cp .env.example .env.local    # puis renseigner les clés affichées par `npx supabase status`
+node --env-file=.env.local scripts/bootstrap-admin.mjs vous@club.ci "Nom Prénom"
+npm run dev                   # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Le lien d'activation du premier administrateur arrive dans Mailpit (http://127.0.0.1:54324) en local.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> Si `ghcr.io` est inaccessible depuis votre réseau : `SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io npx supabase start`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+| Commande | Rôle |
+|---|---|
+| `npm run dev` / `npm run build` / `npm start` | Développement, compilation, production |
+| `npm run typecheck` | Vérification TypeScript |
+| `npm run lint` | ESLint |
+| `npm test` | Tests unitaires |
+| `npm run test:security` | Tests RLS / stockage multi-rôles (pile Supabase locale requise) |
 
-To learn more about Next.js, take a look at the following resources:
+## Documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`docs/` : ARCHITECTURE, ROADMAP, DATABASE_SCHEMA, DESIGN_SYSTEM, PERFORMANCE_FRAMEWORK, GAME_MODEL, VIDEO_ARCHITECTURE, SECURITY, PRIVACY, TEST_PLAN, DEPLOYMENT, USER_GUIDE ; `CHANGELOG.md` à la racine.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Identité visuelle
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Le logo officiel (`public/brand/logo-officiel-yfc.png`) est utilisé sans aucune modification. La maquette de référence est conservée dans `docs/reference/` à titre esthétique uniquement : aucune de ses données n'est utilisée.
