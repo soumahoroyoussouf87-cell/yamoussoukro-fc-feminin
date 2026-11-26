@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { requestPasswordReset, setPassword, signIn, type AuthState } from "@/app/connexion/actions";
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +16,13 @@ function Feedback({ state }: { state: AuthState }) {
 
 export function SignInForm({ suite, linkError }: { suite?: string; linkError?: boolean }) {
   const [state, action, pending] = useActionState(signIn, linkError ? { error: "Lien invalide ou expiré." } : {});
+  // Lien d'invitation par défaut de Supabase (redirigé vers l'adresse du site avec #access_token) :
+  // on le transmet à la page qui ouvre la session.
+  useEffect(() => {
+    if (window.location.hash.includes("access_token=")) {
+      window.location.replace(`/auth/callback${window.location.hash}`);
+    }
+  }, []);
   return (
     <form action={action} className="flex flex-col gap-4">
       <input type="hidden" name="suite" value={suite ?? ""} />

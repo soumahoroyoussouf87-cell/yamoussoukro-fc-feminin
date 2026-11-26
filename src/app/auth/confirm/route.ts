@@ -22,6 +22,10 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
     const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
     if (!error) return NextResponse.redirect(new URL(next, request.url));
+  } else if (!searchParams.get("error")) {
+    // Modèles d'e-mail par défaut : les jetons arrivent dans le fragment (#…), que le
+    // navigateur conserve lors de cette redirection. La page client finalise la session.
+    return NextResponse.redirect(new URL(`/auth/callback?next=${encodeURIComponent(next)}`, request.url));
   }
   return NextResponse.redirect(new URL("/connexion?erreur=lien", request.url));
 }
