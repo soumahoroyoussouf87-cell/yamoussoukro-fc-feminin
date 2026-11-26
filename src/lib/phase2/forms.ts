@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { FormState } from "@/app/(app)/effectif/actions";
 
-export const emptyToNull = (v: unknown) => (typeof v === "string" && v.trim() === "" ? null : v);
+export const emptyToNull = (v: unknown) => (v === undefined || (typeof v === "string" && v.trim() === "") ? null : v);
 export const optText = (max = 300) => z.preprocess(emptyToNull, z.string().trim().max(max, `${max} caractères maximum`).nullable());
 export const optDate = z.preprocess(emptyToNull, z.iso.date("Date invalide").nullable());
 export const reqDate = z.iso.date("Date requise");

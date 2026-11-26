@@ -1,4 +1,4 @@
-# Guide utilisateur — Phase 1
+# Guide utilisateur — Phases 1 et 2
 
 ## Se connecter
 Votre compte est créé par l'administrateur : vous recevez un e-mail « Invitation — YFC Féminin Centre de Haute Performance ». Cliquez sur le lien, choisissez votre mot de passe. Ensuite : page Connexion. Mot de passe oublié : lien sous le formulaire.
@@ -27,3 +27,21 @@ Fiches du staff (fonction, contact, qualifications, période). L'accès à la pl
 
 ## Tableau de bord
 Toutes les valeurs proviennent des données saisies. « Non évalué » signifie qu'aucune évaluation n'existe encore. Les éléments marqués P2 à P7 arrivent avec les phases suivantes.
+
+## Phase 2 — Planification
+- **Calendrier de la saison** : vues jour, semaine, mois, année ; séances, matchs et événements y apparaissent automatiquement.
+- **Macrocycles et mésocycles** : créer d'abord le macrocycle (grande période), puis les mésocycles (blocs de 3 à 6 semaines) dans ses dates.
+- **Microcycles / programme hebdomadaire** : créer la semaine ; les références J-6…J et J+1 sont calculées à partir des matchs. « Dupliquer » recopie une semaine. Après validation et publication, le staff est notifié. « Imprimer / PDF » produit le programme officiel.
+
+## Phase 2 — Entraînement
+- **Bibliothèque d'exercices** : titre, catégorie (15), objectifs, organisation, schéma (image).
+- **Fiche de séance** : date, horaire, objectif, puis ajout des exercices par bloc. Le numéro de séance est automatique. Statuts : Brouillon → Soumis → Validé → Publié → Archivé.
+- **Présences** : un statut par joueuse, enregistré en une fois. **Évaluation** : note et observations après la séance.
+
+## Phase 2 — Compétition
+- **Rencontres** : créer le match (adversaire, date, lieu). Chaque rencontre a ses onglets : Convocations, Onze, Délégation, Direct, Rapport.
+- **Convocations** : le compteur bloque au-delà de la limite de la compétition (18 par défaut). Le commentaire confidentiel reste réservé au staff habilité.
+- **Onze de départ** : toucher un poste puis une joueuse (ou la glisser). Désigner capitaine et tireuses. Une version « provisoire » est confidentielle ; « Communiquer » la rend visible au rôle communication. Export PNG disponible.
+- **Délégation** : importer les convoquées, ajouter le staff, imprimer le document officiel avec signatures.
+- **Direct** : saisir buts, passes, cartons, remplacements à la minute, puis reporter le score.
+- **Classement** : saisie par équipe, contrôlée (V+N+D=J).

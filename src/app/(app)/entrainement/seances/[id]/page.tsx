@@ -122,8 +122,8 @@ export default async function SessionPage({ params, searchParams }: PageProps<"/
                 );
               })}
               {editable ? (
-                <details className="rounded-lg border border-dashed p-3" open={items.length === 0}>
-                  <summary className="cursor-pointer text-sm font-semibold">Ajouter un exercice</summary>
+                <section className="rounded-lg border border-dashed p-3">
+                  <h3 className="text-sm font-semibold">Ajouter un exercice</h3>
                   <div className="mt-3">
                     {(library ?? []).length === 0 ? (
                       <p className="text-sm text-muted-foreground">La bibliothèque est vide. <Link href="/entrainement/exercices/nouveau" className="font-semibold text-primary-text underline">Créer un exercice</Link></p>
@@ -139,7 +139,7 @@ export default async function SessionPage({ params, searchParams }: PageProps<"/
                         ]} />
                     )}
                   </div>
-                </details>
+                </section>
               ) : null}
             </CardContent>
           </Card>

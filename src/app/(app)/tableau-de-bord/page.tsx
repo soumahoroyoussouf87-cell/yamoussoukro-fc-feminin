@@ -6,6 +6,8 @@ import {
 import { requirePermission, can } from "@/lib/auth";
 import { getClubHeader } from "@/lib/club";
 import { getDashboardData } from "@/lib/data/dashboard";
+import { getPhase2Widgets } from "@/lib/data/dashboard-phase2";
+import { dayShort, hm, INTENSITY_LABELS } from "@/lib/phase2/labels";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,9 +29,6 @@ function Kpi({ label, value, hint, tone }: { label: string; value: string | numb
 }
 
 const UPCOMING = [
-  { title: "Classement du championnat", phase: 2, icon: Trophy, text: "Résultats et classement." },
-  { title: "Prochaine séance", phase: 2, icon: ClipboardList, text: "Fiches de séance." },
-  { title: "Programme hebdomadaire", phase: 2, icon: CalendarClock, text: "Microcycles J-6 à J+1." },
   { title: "Système de jeu de référence", phase: 3, icon: Shield, text: "Projet de jeu et systèmes." },
   { title: "Joueuse en focus · radar", phase: 3, icon: Target, text: "Évaluations validées." },
   { title: "Progression collective", phase: 3, icon: FileBarChart, text: "Courbe de l'IPC." },
@@ -42,7 +41,7 @@ const INDICES = ["Technique", "Tactique", "Athlétique", "Cognitif", "Mental", "
 export default async function DashboardPage() {
   const ctx = await requirePermission("dashboard.read");
   const club = await getClubHeader(ctx);
-  const d = await getDashboardData(ctx, club);
+  const [d, w] = await Promise.all([getDashboardData(ctx, club), getPhase2Widgets(ctx)]);
   const r = d.record;
   const unavailable = d.availability.indisponible;
   const limited = d.availability.incertaine + d.availability.restreinte;
@@ -51,10 +50,10 @@ export default async function DashboardPage() {
   const quick = [
     { label: "Ajouter une joueuse", icon: UserPlus, href: can(ctx, "players.write") ? "/effectif/nouvelle" : undefined, phase: 1 },
     { label: "Ajouter un membre du staff", icon: Users, href: can(ctx, "staff.write") ? "/staff/nouveau" : undefined, phase: 1 },
-    { label: "Créer une séance", icon: ClipboardList, phase: 2 },
-    { label: "Créer un match", icon: Trophy, phase: 2 },
-    { label: "Créer une convocation", icon: FileBarChart, phase: 2 },
-    { label: "Composer le onze", icon: Shirt, phase: 2 },
+    { label: "Créer une séance", icon: ClipboardList, href: can(ctx, "planning.write") ? "/entrainement/seances/nouvelle" : undefined, phase: 1 },
+    { label: "Créer un match", icon: Trophy, href: can(ctx, "matches.write") ? "/competition/rencontres/nouvelle" : undefined, phase: 1 },
+    { label: "Créer une convocation", icon: FileBarChart, href: can(ctx, "matches.write") ? "/competition/convocations" : undefined, phase: 1 },
+    { label: "Composer le onze", icon: Shirt, href: can(ctx, "lineups.write") ? "/competition/onze-de-depart" : undefined, phase: 1 },
     { label: "Évaluer une joueuse", icon: Target, phase: 3 },
     { label: "Importer une vidéo", icon: Video, phase: 4 },
     { label: "Créer un objectif", icon: Goal, phase: 4 },
@@ -106,7 +105,7 @@ export default async function DashboardPage() {
           <Kpi label="Buts pour / contre" value={r ? `${r.goalsFor}/${r.goalsAgainst}` : "—"} hint={r ? `${r.cleanSheets} clean sheet(s)` : undefined} />
         </div>
         <p className="mt-2 text-xs text-muted-foreground">
-          Le classement sera calculé avec le module Résultats &amp; Classement (Phase 2). Les matchs sont saisis dans le Match Center (Phase 2).
+          Bilan calculé sur les matchs au statut « Joué ». Les scores se saisissent dans le Match Center (après-match).
         </p>
       </section>
 
@@ -221,17 +220,80 @@ export default async function DashboardPage() {
           <CardContent>
             {d.nextMatch ? (
               <div>
-                <p className="font-display text-2xl font-bold uppercase">{d.nextMatch.opponent}</p>
+                <Link href="/competition/match-center" className="font-display text-2xl font-bold uppercase hover:underline">{d.nextMatch.opponent}</Link>
                 <p className="text-sm text-muted-foreground">
                   {formatDateTime(d.nextMatch.kickoff_at)} · {d.nextMatch.home_away === "domicile" ? "Domicile" : d.nextMatch.home_away === "exterieur" ? "Extérieur" : "Terrain neutre"}
                   {d.nextMatch.venue ? ` · ${d.nextMatch.venue}` : ""}
                 </p>
               </div>
             ) : (
-              <EmptyState icon={Trophy} title="Aucun match programmé" description="Le calendrier des rencontres sera saisi dans le Match Center (Phase 2)." />
+              <EmptyState icon={Trophy} title="Aucun match programmé" description="Saisissez le calendrier dans Compétition › Calendrier des rencontres." />
             )}
           </CardContent>
         </Card>
+
+        {w.canPlanning ? (
+          <Card>
+            <CardHeader className="flex-row items-center justify-between">
+              <CardTitle className="text-base">Prochaine séance</CardTitle>
+              <ClipboardList className="size-4 text-muted-foreground" aria-hidden />
+            </CardHeader>
+            <CardContent>
+              {w.nextSession ? (
+                <Link href={`/entrainement/seances/${w.nextSession.id}`} className="block hover:underline">
+                  <p className="font-display text-xl font-bold uppercase">Séance n°{w.nextSession.number} · {w.nextSession.theme}</p>
+                  <p className="text-sm capitalize text-muted-foreground">{dayShort(w.nextSession.session_date)}{w.nextSession.starts_at ? ` · ${hm(w.nextSession.starts_at)}` : ""}{w.nextSession.intensity ? ` · intensité ${INTENSITY_LABELS[w.nextSession.intensity].toLowerCase()}` : ""}</p>
+                </Link>
+              ) : (
+                <EmptyState icon={ClipboardList} title="Aucune séance planifiée" description="Créez les séances depuis le programme hebdomadaire." />
+              )}
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {w.canPlanning ? (
+          <Card>
+            <CardHeader className="flex-row items-center justify-between">
+              <CardTitle className="text-base">Programme de la semaine</CardTitle>
+              <CalendarClock className="size-4 text-muted-foreground" aria-hidden />
+            </CardHeader>
+            <CardContent>
+              <ul className="grid grid-cols-7 gap-1 text-center text-[11px]">
+                {w.week.map((day) => (
+                  <li key={day.date} className={`rounded-md border p-1 ${day.isToday ? "ring-2 ring-fuchsia" : ""}`}>
+                    <p className="font-semibold capitalize">{dayShort(day.date).split(" ")[0]}</p>
+                    <p className="font-display text-sm font-bold text-primary-text">{day.label ?? "·"}</p>
+                    <p className="text-muted-foreground">{day.sessions ? `${day.sessions} S` : ""}{day.matches ? " M" : ""}{!day.sessions && !day.matches && day.events ? `${day.events} A` : ""}</p>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/planification/programme" className="mt-3 inline-block text-sm font-semibold text-primary-text hover:underline">Ouvrir le programme</Link>
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {w.canMatches ? (
+          <Card>
+            <CardHeader className="flex-row items-center justify-between">
+              <CardTitle className="text-base">Classement</CardTitle>
+              <Trophy className="size-4 text-muted-foreground" aria-hidden />
+            </CardHeader>
+            <CardContent>
+              {w.standings.length ? (
+                <ol className="flex flex-col gap-1 text-sm">
+                  {w.standings.map((r) => (
+                    <li key={r.id} className={`flex justify-between rounded px-2 py-0.5 ${r.is_own_team ? "bg-fuchsia/10 font-semibold" : ""}`}>
+                      <span><span className="mr-2 font-display font-bold">{r.position}</span>{r.team_name}</span><span className="tabular-nums">{r.points} pts</span>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <EmptyState icon={Trophy} title="Classement non saisi" description="Saisissez le classement officiel dans Compétition › Classement." />
+              )}
+              <Link href="/competition/classement" className="mt-3 inline-block text-sm font-semibold text-primary-text hover:underline">Voir le classement</Link>
+            </CardContent>
+          </Card>
+        ) : null}
 
         <Card>
           <CardHeader>

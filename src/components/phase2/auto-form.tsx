@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import type { FormState } from "@/app/(app)/effectif/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -76,7 +76,7 @@ export function AutoForm({
   );
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form onSubmit={(e) => { e.preventDefault(); const fd = new FormData(e.currentTarget); startTransition(() => formAction(fd)); }} className="flex flex-col gap-4">
       {state.error ? <p role="alert" className="rounded-md bg-danger/10 px-4 py-3 text-sm font-medium text-danger">{state.error}</p> : null}
       {state.ok ? <p role="status" className="rounded-md bg-success/10 px-4 py-3 text-sm font-medium text-success">{state.ok}</p> : null}
       {bare ? body : <Card><CardContent className="pt-5">{body}</CardContent></Card>}

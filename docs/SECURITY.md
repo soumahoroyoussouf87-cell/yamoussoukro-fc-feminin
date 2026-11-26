@@ -12,6 +12,12 @@
 - **En-têtes HTTP** : `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy` ; `robots: noindex`.
 - **Validation** : Zod sur toutes les entrées ; échappement des filtres de recherche.
 
+## Mesures ajoutées (Phase 2)
+- **Workflow contrôlé en base** : le trigger `app.guard_workflow` refuse toute transition non autorisée (un adjoint ne peut ni valider ni modifier un élément publié) ; chaque changement de statut est historisé dans `approval_history`.
+- **Confidentialité des compositions** : convocations et onze provisoires visibles uniquement avec `lineups.read_draft` ; le rôle communication ne voit que les versions communiquées ; le commentaire confidentiel n'est pas lisible via l'API sans cette permission (privilège de colonne) et n'apparaît sur aucun document imprimé.
+- **Délégations** verrouillées après validation.
+- **Stockage** : bucket privé `exercise-diagrams` (images uniquement).
+
 ## Tests
 `npm run test:security` : 14 scénarios multi-rôles (anonyme, sans rôle avec métadonnées piégées, admin, entraîneur, team manager, communication, intendant, deux joueuses).
 

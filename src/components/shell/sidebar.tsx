@@ -49,7 +49,7 @@ export function Sidebar({ permissions, brand }: { permissions: string[]; brand: 
                       </li>
                     );
                   }
-                  const base = item.href.split("#")[0];
+                  const base = item.href.split(/[#?]/)[0];
                   const active = pathname === base || (base !== "/" && pathname.startsWith(`${base}/`));
                   return (
                     <li key={item.label}>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // Recette Phase 1 (Playwright). Prérequis : pile Supabase locale réinitialisée, admin amorcé
 // (direction.test@yfc.test), application sur http://localhost:3000.
 // Usage : node tests/e2e/recette-phase1.cjs <dossier-captures>

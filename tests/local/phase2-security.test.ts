@@ -90,11 +90,28 @@ describe("Séances et workflow Brouillon → Validé → Publié", () => {
     expect(notifAssistant.length).toBe(1);
   });
 
+  it("ouvre le microcycle de la semaine puis le publie (programme hebdomadaire)", async () => {
+    const [mc] = await as<{ id: string }>(db, u.assistant,
+      `insert into public.microcycles (club_id, team_id, season_id, week_start) values ($1, $2, $3, '2026-11-30') returning id`, [CLUB, TEAM, season]);
+    expect(mc.id).toBeTruthy();
+    expect(await tryAs(db, u.assistant, `update public.microcycles set objective = 'Préparer J1' where id = $1`, [mc.id])).toBeNull();
+    expect(await tryAs(db, u.assistant, `update public.microcycles set status = 'publie' where id = $1`, [mc.id])).toMatch(/Validation réservée/);
+    expect(await tryAs(db, u.coach, `update public.microcycles set status = 'publie' where id = $1`, [mc.id])).toBeNull();
+    const notif = await as(db, u.assistant, `select id from public.notifications where kind = 'programme'`);
+    expect(notif.length).toBe(1);
+  });
+
   it("une séance validée n'est plus modifiable par l'adjoint (fiche et exercices)", async () => {
     expect(await tryAs(db, u.assistant, `update public.training_sessions set theme = 'Autre' where id = $1`, [session])).toMatch(/Élément validé/);
     expect(await tryAs(db, u.assistant, `delete from public.session_exercises where session_id = $1`, [session])).toMatch(/Séance validée/);
     const del = await as(db, u.assistant, `delete from public.training_sessions where id = $1 returning id`, [session]);
     expect(del).toHaveLength(0);
+  });
+
+  it("notifie le staff quand l'horaire d'une séance publiée change", async () => {
+    expect(await tryAs(db, u.coach, `update public.training_sessions set starts_at = '10:00' where id = $1`, [session])).toBeNull();
+    const notif = await as(db, u.assistant, `select id from public.notifications where kind = 'horaire'`);
+    expect(notif.length).toBe(1);
   });
 
   it("une joueuse voit les séances publiées, jamais les brouillons", async () => {

@@ -36,5 +36,22 @@ RPC exposées : `my_memberships()`, `my_permissions(club)` (utilisateur connect�
 ## Stockage (buckets privés)
 `club-assets`, `player-photos`, `staff-photos`, `player-documents`. Chemin : `{club_id}/{entité_id}/{fichier}`. Politiques dérivées des permissions du club et, pour la joueuse, de sa propre fiche.
 
-## Tables prévues (phases 2 à 6)
+## Tables Phase 2 (migrations 006 à 008)
+| Table | Rôle |
+|---|---|
+| macrocycles, mesocycles, microcycles | planification ; microcycle avec workflow |
+| calendar_events | activités, réunions, voyages… |
+| exercises | bibliothèque (15 catégories, schéma dans le bucket `exercise-diagrams`) |
+| training_sessions, session_exercises | fiche de séance (numéro automatique, workflow), exercices par bloc |
+| training_attendance, session_evaluations | présences (unique séance + joueuse), évaluation post-séance |
+| approval_history | historique de toutes les transitions de workflow |
+| match_squads, match_squad_players | convocation, limite de la compétition ; `confidential_comment` protégé par privilège de colonne |
+| lineups, lineup_players, lineup_snapshots | onze versionné (provisoire → validé → communiqué), historique des versions |
+| match_events | événements minutés du match |
+| delegations, delegation_members | délégation officielle, verrouillée après validation |
+| standings | classement saisi |
+
+Fonctions ajoutées : `app.guard_workflow(perm)`, `app.track_status()`, `app.notify_staff()`, `app.notify_planning()` (corrigée en 008).
+
+## Tables prévues (phases 3 à 6)
 Conformément au §45 du cahier des charges : planification, compétition complète (`match_squads`, `lineups` avec statut de workflow et historique, `match_events`, `delegations`…), tactique (`game_models`, `game_model_versions`…), performance (`evaluation_frameworks`, `framework_versions`, `position_criteria_weights`, `evaluation_scores`, `evaluation_evidence`, `performance_snapshots`…), vidéo (`videos`, `video_clips`, `clip_players`, `video_access_grants`…), développement, sport science, schéma `medical` séparé, `approval_workflows` / `approval_history`, `ai_reports` / `ai_report_sources`.
