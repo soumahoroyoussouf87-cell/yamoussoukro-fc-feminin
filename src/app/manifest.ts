@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "YFC Féminin — High Performance Center",
-    short_name: "YFC HPC",
+    name: "YFC Féminin — Centre de Haute Performance",
+    short_name: "YFC Féminin",
     description: "Plateforme interne de management de la performance — Yamoussoukro FC Féminin",
     start_url: "/tableau-de-bord",
     display: "standalone",

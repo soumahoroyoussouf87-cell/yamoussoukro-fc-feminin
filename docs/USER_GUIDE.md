@@ -1,7 +1,7 @@
 # Guide utilisateur — Phase 1
 
 ## Se connecter
-Votre compte est créé par l'administrateur : vous recevez un e-mail « Invitation — YFC Féminin High Performance Center ». Cliquez sur le lien, choisissez votre mot de passe. Ensuite : page Connexion. Mot de passe oublié : lien sous le formulaire.
+Votre compte est créé par l'administrateur : vous recevez un e-mail « Invitation — YFC Féminin Centre de Haute Performance ». Cliquez sur le lien, choisissez votre mot de passe. Ensuite : page Connexion. Mot de passe oublié : lien sous le formulaire.
 
 ## Installer l'application sur téléphone
 Android (Chrome) : menu ⋮ › « Installer l'application ». iPhone (Safari) : bouton Partager › « Sur l'écran d'accueil ».

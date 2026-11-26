@@ -20,7 +20,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       <ClubLogo src={club.logoUrl ?? undefined} size={44} />
       <div className="leading-tight">
         <p className="font-display text-base font-bold uppercase tracking-wide text-white">{club.name}</p>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-fuchsia">High Performance Center</p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-fuchsia">Centre de Haute Performance</p>
       </div>
     </div>
   );

@@ -69,7 +69,7 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-5">
             <ClubLogo src={club.logoUrl ?? undefined} size={84} />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-fuchsia">High Performance Center</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-fuchsia">Centre de Haute Performance</p>
               <h1 className="font-display text-3xl font-extrabold uppercase leading-none sm:text-5xl">{club.name}</h1>
               <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-white/70">
                 Observer • Évaluer • Planifier • Développer • Performer

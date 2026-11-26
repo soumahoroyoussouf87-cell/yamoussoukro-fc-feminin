@@ -13,9 +13,9 @@ const barlow = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: { default: "YFC Féminin — High Performance Center", template: "%s · YFC HPC" },
+  title: { default: "YFC Féminin — Centre de Haute Performance", template: "%s · YFC Féminin" },
   description: "Plateforme interne de management et de développement de la performance — Yamoussoukro FC Féminin.",
-  applicationName: "YFC High Performance Center",
+  applicationName: "YFC Féminin — Centre de Haute Performance",
   robots: { index: false, follow: false },
   manifest: "/manifest.webmanifest",
   icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },

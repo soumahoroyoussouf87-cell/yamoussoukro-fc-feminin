@@ -8,7 +8,7 @@ export function AuthShell({ title, children }: { title: string; children: React.
           <ClubLogo size={56} />
           <div className="leading-tight">
             <p className="font-display text-2xl font-bold uppercase">Yamoussoukro FC Féminin</p>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-fuchsia">High Performance Center</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-fuchsia">Centre de Haute Performance</p>
           </div>
         </div>
         <h1 className="mb-6 font-display text-xl font-semibold uppercase tracking-wide">{title}</h1>
