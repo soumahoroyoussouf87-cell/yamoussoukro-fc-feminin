@@ -76,6 +76,8 @@ function Poster({ starters, bench, system, match, format, title, draft }: {
 
       {/* Terrain */}
       <PitchLines {...pitch} />
+      {/* Symbole du club en filigrane, au centre du terrain */}
+      <img src="/brand/symbole-yfc-blanc.png" alt="" style={{ position: "absolute", left: pitch.left + pitch.width * 0.1, top: pitch.top + pitch.height / 2 - (pitch.width * 0.8 * 1000) / 1200 / 2, width: pitch.width * 0.8, height: "auto", opacity: 0.07 }} />
       {system ? (
         <span style={{ position: "absolute", left: pitch.left + 18, top: pitch.top + 14, fontFamily: DISPLAY, fontWeight: 800, fontSize: 30 * k, letterSpacing: "0.06em", color: "#fff", background: FUCHSIA, borderRadius: 6, padding: "2px 12px" }}>{system}</span>
       ) : null}
