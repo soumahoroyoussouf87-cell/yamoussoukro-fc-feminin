@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Printer } from "lucide-react";
+import { ImageIcon, Printer } from "lucide-react";
 import { can, requirePermission } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getApprovalHistory, listPlayerOptions } from "@/lib/phase2/data";
@@ -44,7 +44,10 @@ export default async function SquadPage({ params }: PageProps<"/competition/renc
           <WorkflowBar status={squad.status} canWrite={write} canValidate={can(ctx, "lineups.validate")} onChange={setWorkflowStatus.bind(null, "match_squads", squad.id, `/competition/rencontres/${id}/convocations`)}
             validateHint="La convocation est validée puis publiée par l'entraîneur principal ou la direction sportive. La publication notifie le staff et les joueuses convoquées." />
         </div>
-        <Button asChild variant="outline"><Link href={`/impression/convocation/${id}`} target="_blank"><Printer />PDF / PNG</Link></Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline"><Link href={`/impression/convocation/${id}`} target="_blank"><Printer />PDF / PNG</Link></Button>
+          <Button asChild><Link href={`/impression/affiche-convocation/${id}`} target="_blank"><ImageIcon />Affiche des convoquées</Link></Button>
+        </div>
       </div>
       <ApprovalHistory items={history} />
       <SquadForm action={saveSquad.bind(null, squad.id, id)} players={players} initial={initial} sizeLimit={squad.size_limit} notes={squad.notes} readOnly={!write || locked} showComments={showComments} />

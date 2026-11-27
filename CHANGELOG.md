@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [0.3.1] — 2026-11-27 — Affiche des convoquées
+
+### Ajouté
+- Affiche partageable des joueuses convoquées pour chaque match (onglet Convocation › « Affiche des convoquées ») : logo officiel, titre, bandeau du match, grille de cartes joueuse (photo, numéro, nom, poste) qui s'adapte au nombre de convoquées.
+- Formats portrait 4:5, carré et story 9:16 ; exports PNG HD et JPEG HD (2160 px de large), version WhatsApp allégée, partage direct depuis le téléphone. Mention « Provisoire » tant que la convocation n'est pas validée.
+- Aucune migration : les photos du stockage privé sont lues avec la session de l'utilisateur.
+
 ## [0.3.0] — 2026-11-27 — Fiches de séance professionnelles
 
 ### Ajouté
