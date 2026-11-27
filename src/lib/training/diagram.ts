@@ -12,7 +12,7 @@ export type Team = "a" | "b" | "c" | "gk";
 export type EquipKind = "ball" | "cone" | "disc" | "mannequin" | "minigoal" | "goal" | "pole" | "ladder" | "hurdle";
 export type ArrowKind = "run" | "pass" | "dribble" | "shot";
 
-export type PlayerItem = { id: string; type: "player"; x: number; y: number; team: Team; label: string };
+export type PlayerItem = { id: string; type: "player"; x: number; y: number; team: Team; label: string; name?: string; pid?: string };
 export type EquipItem = { id: string; type: EquipKind; x: number; y: number; rot?: number; color?: string };
 export type ArrowItem = { id: string; type: "arrow"; kind: ArrowKind; from: Pt; to: Pt; ctrl?: Pt | null; color?: string };
 export type ZoneItem = { id: string; type: "zone"; shape: "rect" | "ellipse"; x: number; y: number; w: number; h: number; color: string; hatch: boolean; label?: string };
@@ -277,6 +277,11 @@ export function itemShapes(d: Diagram, it: Item, frame = 0, t = 0): Shape[] {
     const c = TEAM_COLORS[it.team] ?? TEAM_COLORS.a;
     const out: Shape[] = [{ k: "circle", cx: p.x, cy: p.y, r: 17, fill: c.fill, stroke: "#ffffff", sw: 3 }];
     if (it.label) out.push({ k: "text", x: p.x, y: p.y + 6, text: it.label.slice(0, 3), size: it.label.length > 2 ? 13 : 16, fill: c.text, weight: 700, anchor: "middle" });
+    if (it.name) {
+      const tw = it.name.length * 7.4 + 12;
+      out.push({ k: "rect", x: p.x - tw / 2, y: p.y + 21, w: tw, h: 19, rx: 4, fill: "#111827", opacity: 0.82 });
+      out.push({ k: "text", x: p.x, y: p.y + 35, text: it.name, size: 12, fill: "#ffffff", weight: 700, anchor: "middle" });
+    }
     return out;
   }
   if (it.type === "text") return [{ k: "text", x: p.x, y: p.y, text: it.text, size: it.size, fill: it.color, weight: 700 }];
@@ -341,7 +346,7 @@ const pt = z.object({ x: num, y: num });
 const id = z.string().min(1).max(40);
 const color = z.string().regex(/^#[0-9a-fA-F]{6}$/);
 const itemSchema = z.union([
-  z.object({ id, type: z.literal("player"), x: num, y: num, team: z.enum(["a", "b", "c", "gk"]), label: z.string().max(4) }),
+  z.object({ id, type: z.literal("player"), x: num, y: num, team: z.enum(["a", "b", "c", "gk"]), label: z.string().max(4), name: z.string().max(24).optional(), pid: z.string().max(40).optional() }),
   ...(["ball", "cone", "disc", "mannequin", "minigoal", "goal", "pole", "ladder", "hurdle"] as const).map((t) =>
     z.object({ id, type: z.literal(t), x: num, y: num, rot: num.optional(), color: color.optional() }),
   ),

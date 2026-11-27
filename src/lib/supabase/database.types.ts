@@ -1749,6 +1749,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"set_piece_routines": {
+                  Row: {
+                    "archived_at": string | null,"category": string,"club_id": string,"created_at": string,"created_by": string | null,"diagram": Json | null,"id": string,"instructions": string | null,"name": string,"notes": string | null,"responsibilities": NonNullable<Json>,"side": string,"signal": string | null,"sort_order": number,"takers": (string)[],"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"category": string,"club_id": string,"created_at"?: string,"created_by"?: string | null,"diagram"?: Json | null,"id"?: string,"instructions"?: string | null,"name": string,"notes"?: string | null,"responsibilities"?: NonNullable<Json>,"side"?: string,"signal"?: string | null,"sort_order"?: number,"takers"?: (string)[],"updated_at"?: string
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"category"?: string,"club_id"?: string,"created_at"?: string,"created_by"?: string | null,"diagram"?: Json | null,"id"?: string,"instructions"?: string | null,"name"?: string,"notes"?: string | null,"responsibilities"?: NonNullable<Json>,"side"?: string,"signal"?: string | null,"sort_order"?: number,"takers"?: (string)[],"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "set_piece_routines_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"staff_members": {
                   Row: {
                     "club_id": string,"created_at": string,"email": string | null,"ends_on": string | null,"first_name": string,"id": string,"last_name": string,"phone": string | null,"photo_path": string | null,"profile_id": string | null,"qualifications": string | null,"role_id": string,"starts_on": string | null,"status": Database["public"]['Enums']["staff_status"],"team_id": string | null,"updated_at": string

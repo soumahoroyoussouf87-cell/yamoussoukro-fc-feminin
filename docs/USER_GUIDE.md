@@ -83,3 +83,9 @@ Toutes les valeurs proviennent des données saisies. « Non évalué » signifie
 - **Tactique › Analyse des adversaires** : ouvrez l'adversaire, « Nouvelle fiche d'observation », remplissez les faits observés puis la lecture du staff (enregistrement automatique). Le bouton « Rapport d'avant-match » prépare le document du prochain match.
 - **Rapports** : choisissez la période, puis ouvrez le rapport collectif, le bilan, un rapport d'avant-match ou le rapport d'une joueuse. « Imprimer / Enregistrer en PDF » pour obtenir un PDF.
 - **Pilotage › Tâches du staff** : « Nouvelle tâche », confiez-la à un membre du staff (il est notifié), cochez-la quand elle est faite.
+
+## Tableau tactique et coups de pied arrêtés (Phase 3, 27/11/2026)
+- **Tableau tactique** (menu Tactique) : choisis « Équipe YFC », touche le terrain pour placer une joueuse, puis dans « Joueuse de l'effectif » choisis son nom : il s'affiche sous le pion avec son numéro. Ajoute ballon, flèches, zones, puis « + Étape » pour animer. « Enregistrer le schéma », puis « PDF · toutes les étapes » pour l'imprimer ou l'enregistrer en PDF.
+- **Coups de pied arrêtés** (menu Tactique) : « Nouvelle combinaison », choisis la catégorie, le nom et le côté, puis « Créer et dessiner ». Remplis le signal, les consignes, ajoute les tireuses (flèches pour changer l'ordre) et les responsabilités de chaque joueuse : tout s'enregistre seul. Dessine la combinaison sur le tableau puis « Enregistrer le schéma ».
+- « Imprimer le carnet » sort toutes les combinaisons en vigueur ; « Imprimer la fiche » une seule. Une combinaison qui ne sert plus s'archive (elle reste consultable via « Voir les combinaisons archivées »).
+- Réservé au staff technique : la communication, l'intendance et les joueuses n'y ont pas accès.

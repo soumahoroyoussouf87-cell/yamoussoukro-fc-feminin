@@ -80,10 +80,10 @@ export const NAVIGATION: NavSection[] = [
     items: [
       { label: "Projet de jeu", icon: Shield, href: "/projet-de-jeu", phase: 3, permission: "evaluations.read" },
       { label: "Systèmes de jeu", icon: Network, href: "/projet-de-jeu/systemes", phase: 3, permission: "evaluations.read" },
-      { label: "Tableau tactique", icon: Map, phase: 3 },
+      { label: "Tableau tactique", icon: Map, href: "/entrainement/schemas/nouveau", phase: 3, permission: "planning.write" },
       { label: "Principes et sous-principes", icon: ScrollText, href: "/projet-de-jeu", phase: 3, permission: "evaluations.read" },
       { label: "Analyse des adversaires", icon: Swords, href: "/tactique/adversaires", phase: 3, permission: "evaluations.read" },
-      { label: "Coups de pied arrêtés", icon: Flag, phase: 3 },
+      { label: "Coups de pied arrêtés", icon: Flag, href: "/tactique/cpa", phase: 3, permission: "evaluations.read" },
     ],
   },
   {

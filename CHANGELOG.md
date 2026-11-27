@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [0.8.0] — 2026-11-27 — Phase 3 · livraison 5 : tableau tactique et coups de pied arrêtés
+
+### Ajouté
+- Tableau tactique (menu Tactique) : le tableau existant reçoit le nom des joueuses sous les pions (choix dans l'effectif, numéro de la saison repris) ou un nom libre ; version imprimable de toutes les étapes d'un schéma (PDF via le navigateur, PNG) aux couleurs du club.
+- Coups de pied arrêtés (migration 014) : carnet confidentiel du staff technique, groupé par catégorie (corners, coups francs, penalties, touches, offensifs et défensifs), côté, signal, déroulement et consignes, tireuses dans l'ordre, responsabilités individuelles, schéma animé propre à chaque combinaison, dupliquer, archiver, restaurer, supprimer (confirmation en deux temps). Carnet complet et fiche par combinaison imprimables.
+- La base vérifie que les tireuses et joueuses désignées appartiennent au club, sans doublon, et qu'un rôle est saisi pour chaque responsabilité.
+
 ## [0.7.0] — 2026-11-27 — Phase 3 · livraison 4 : adversaires, rapports et tâches du staff
 
 ### Ajouté

@@ -44,5 +44,10 @@ Tests unitaires : `tests/unit/training-sheets.test.ts` ; sécurité base : bloc 
 - `tests/local/phase3-scouting-tasks.test.ts` : confidentialité des fiches adversaires, cohérence adversaire / match, attribution et notification des tâches, droits de modification et de suppression, date de fin.
 - `tests/e2e/recette-l4.cjs` : 8 étapes (fiche adversaire, rapport d'avant-match, rapports individuel / collectif / bilan avec logo, tâche confiée puis terminée, droits, mobile 390 px).
 
+## Phase 3 · livraison 5 (27/11/2026)
+- `tests/unit/tactical-board.test.ts` : nom des joueuses accepté, dessiné (écran et exports), longueur contrôlée, nom court.
+- `tests/local/phase3-set-pieces.test.ts` : création, joueuse d'un autre club, tireuse en double, rôle vide, catégorie invalide, confidentialité (intendance, communication, joueuse), archivage, journal, suppression.
+- `tests/e2e/recette-l5.cjs` : 10 étapes (tableau tactique avec noms et 2 étapes, PDF de toutes les étapes, création d'une combinaison, fiche et tireuses, schéma animé, carnet imprimable, dupliquer / archiver / restaurer / supprimer, droits, mobile 390 px).
+
 ## À ajouter dans les phases suivantes
 Calcul des indices (N/E, seuils, sources), confidentialité du onze provisoire, accès clip vs vidéo source, confidentialité médicale, exports PDF/PNG, restauration de sauvegarde.

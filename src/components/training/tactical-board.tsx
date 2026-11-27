@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
-  Copy, Download, FileJson, Hand, Image as ImageIcon, MousePointer2, Pause, Play, Plus, Redo2, Ruler, Save, Square, Circle as CircleIcon, Trash2, Type, Undo2, Upload, X,
+  Copy, Download, FileJson, Hand, Image as ImageIcon, MousePointer2, Pause, Play, Plus, Printer, Redo2, Ruler, Save, Square, Circle as CircleIcon, Trash2, Type, Undo2, Upload, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/form";
@@ -40,12 +40,18 @@ type Props = {
   canCopy?: boolean;
   saveHint?: string;
   onClose?: () => void;
+  /** Effectif du club : permet d'afficher le nom d'une joueuse sous son pion. */
+  roster?: RosterEntry[];
+  /** Lien vers la version imprimable (PDF, toutes les étapes). */
+  printHref?: string;
 };
+
+export type RosterEntry = { id: string; name: string; number: number | null };
 
 const HISTORY = 60;
 const clone = (d: Diagram): Diagram => JSON.parse(JSON.stringify(d));
 
-export function TacticalBoard({ initial, title: initialTitle, readOnly = false, onSave, canCopy = false, saveHint, onClose }: Props) {
+export function TacticalBoard({ initial, title: initialTitle, readOnly = false, onSave, canCopy = false, saveHint, onClose, roster, printHref }: Props) {
   const [doc, setDoc] = useState<Diagram>(() => (initial ? clone(initial) : emptyDiagram("half")));
   const [title, setTitle] = useState(initialTitle);
   const [tool, setTool] = useState<Tool>({ t: "select" });
@@ -382,7 +388,7 @@ export function TacticalBoard({ initial, title: initialTitle, readOnly = false, 
 
         {!readOnly ? (
           <div className="flex flex-col gap-3 text-sm">
-            <Properties item={selected} onPatch={patchSel} onDelete={removeSel} onDuplicate={duplicateSel} />
+            <Properties item={selected} onPatch={patchSel} onDelete={removeSel} onDuplicate={duplicateSel} roster={roster} />
             <div className="flex flex-col gap-1.5 rounded-lg border p-3">
               <p className="text-xs font-semibold uppercase text-muted-foreground">Exporter / importer</p>
               <div className="grid grid-cols-2 gap-1.5">
@@ -391,6 +397,12 @@ export function TacticalBoard({ initial, title: initialTitle, readOnly = false, 
                 <Button type="button" size="sm" variant="outline" disabled={pending} onClick={() => exportImage("svg")}><Download />SVG</Button>
                 <Button type="button" size="sm" variant="outline" onClick={exportJson}><FileJson />Données</Button>
               </div>
+              {printHref ? (
+                <a href={printHref} target="_blank" rel="noopener" className="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border px-3 text-xs font-medium hover:bg-muted">
+                  <Printer className="size-4" />PDF · toutes les étapes
+                </a>
+              ) : null}
+              {printHref && dirty ? <p className="text-[11px] text-warning">Enregistre d&apos;abord pour imprimer la dernière version.</p> : null}
               <Button type="button" size="sm" variant="ghost" onClick={() => fileRef.current?.click()}><Upload />Importer un schéma (.json)</Button>
               <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void importJson(f); e.target.value = ""; }} />
             </div>
@@ -520,7 +532,7 @@ function ArrowGlyph({ kind }: { kind: ArrowKind }) {
   );
 }
 
-function Properties({ item, onPatch, onDelete, onDuplicate }: { item: Item | null; onPatch: (p: Record<string, unknown>) => void; onDelete: () => void; onDuplicate: () => void }) {
+function Properties({ item, onPatch, onDelete, onDuplicate, roster }: { item: Item | null; onPatch: (p: Record<string, unknown>) => void; onDelete: () => void; onDuplicate: () => void; roster?: RosterEntry[] }) {
   if (!item) return <p className="rounded-lg border p-3 text-xs text-muted-foreground">Choisis un outil puis touche le terrain. Pour les flèches, zones et cotes, fais glisser. Sélectionne un élément pour le modifier.</p>;
   const colors = (k: string, value?: string) => (
     <div className="flex flex-wrap gap-1">
@@ -537,6 +549,18 @@ function Properties({ item, onPatch, onDelete, onDuplicate }: { item: Item | nul
       </p>
       {item.type === "player" ? (
         <>
+          {roster?.length ? (
+            <label className="text-xs">Joueuse de l&apos;effectif
+              <Select className="mt-1 h-8" value={item.pid ?? ""} onChange={(e) => {
+                const r = roster.find((x) => x.id === e.target.value);
+                onPatch(r ? { pid: r.id, name: r.name, ...(r.number ? { label: String(r.number) } : {}) } : { pid: undefined, name: undefined });
+              }}>
+                <option value="">— Aucune (pion anonyme) —</option>
+                {roster.map((r) => <option key={r.id} value={r.id}>{r.number ? `${r.number} · ` : ""}{r.name}</option>)}
+              </Select>
+            </label>
+          ) : null}
+          <label className="text-xs">Nom affiché<Input className="mt-1 h-8" value={item.name ?? ""} maxLength={24} placeholder="Ex. A. KONÉ" onChange={(e) => onPatch({ name: e.target.value || undefined, pid: undefined })} /></label>
           <label className="text-xs">Numéro / initiales<Input className="mt-1 h-8" value={item.label} maxLength={3} onChange={(e) => onPatch({ label: e.target.value.toUpperCase() })} /></label>
           <label className="text-xs">Équipe
             <Select className="mt-1 h-8" value={item.team} onChange={(e) => onPatch({ team: e.target.value })}>
