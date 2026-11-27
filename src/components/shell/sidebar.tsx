@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 export function Sidebar({ permissions, brand }: { permissions: string[]; brand: React.ReactNode }) {
   const pathname = usePathname();
+  const hrefs = NAVIGATION.flatMap((s) => s.items.map((i) => i.href?.split(/[#?]/)[0]).filter((h): h is string => !!h));
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const allowed = new Set(permissions);
@@ -50,7 +51,8 @@ export function Sidebar({ permissions, brand }: { permissions: string[]; brand: 
                     );
                   }
                   const base = item.href.split(/[#?]/)[0];
-                  const active = pathname === base || (base !== "/" && pathname.startsWith(`${base}/`));
+                  // L'entrée la plus précise l'emporte (ex. /entrainement/seances plutôt que /entrainement).
+                  const active = pathname === base || (base !== "/" && pathname.startsWith(`${base}/`) && !hrefs.some((h) => h.length > base.length && h.startsWith(`${base}/`) && (pathname === h || pathname.startsWith(`${h}/`))));
                   return (
                     <li key={item.label}>
                       <Link

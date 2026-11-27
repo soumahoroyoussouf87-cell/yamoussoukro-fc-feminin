@@ -53,5 +53,18 @@ RPC exposées : `my_memberships()`, `my_permissions(club)` (utilisateur connect�
 
 Fonctions ajoutées : `app.guard_workflow(perm)`, `app.track_status()`, `app.notify_staff()`, `app.notify_planning()` (corrigée en 008).
 
+## Fiches de séance (migration 009)
+| Table / colonnes | Rôle |
+|---|---|
+| training_themes | thèmes et sous-thèmes (parent_id) |
+| tactical_diagrams | schémas éditables (`data` JSON : terrain, éléments, étapes d'animation) |
+| session_phases | phases ordonnées d'une séance ; `session_exercises.phase_id`, séries, récupération (s), pause |
+| session_equipment | matériel de la séance |
+| session_templates | modèles (copie JSON des informations, phases, exercices et matériel) |
+| training_attendance.participation, minutes, rpe, srpe | charge individuelle (`srpe` = minutes × RPE, calculé) |
+| session_evaluations.criteria, appreciation, difficulties, corrections, next_objective | évaluation par critères et bilan |
+
+Fonctions : `app.set_updated_by()`, `app.guard_same_club()` (phase, schéma et thème du même club / de la même séance).
+
 ## Tables prévues (phases 3 à 6)
 Conformément au §45 du cahier des charges : planification, compétition complète (`match_squads`, `lineups` avec statut de workflow et historique, `match_events`, `delegations`…), tactique (`game_models`, `game_model_versions`…), performance (`evaluation_frameworks`, `framework_versions`, `position_criteria_weights`, `evaluation_scores`, `evaluation_evidence`, `performance_snapshots`…), vidéo (`videos`, `video_clips`, `clip_players`, `video_access_grants`…), développement, sport science, schéma `medical` séparé, `approval_workflows` / `approval_history`, `ai_reports` / `ai_report_sources`.

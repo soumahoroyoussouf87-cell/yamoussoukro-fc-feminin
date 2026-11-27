@@ -221,3 +221,66 @@ describe("Délégations et événements de match", () => {
     expect(await as(db, u.medical, `select id from public.lineups where status = 'provisoire'`)).toHaveLength(0);
   });
 });
+
+describe("Fiches de séance (migration 009)", () => {
+  let s = "";
+  let phase = "";
+  beforeAll(async () => {
+    s = (await as<{ id: string }>(db, u.coach,
+      `insert into public.training_sessions (club_id, team_id, season_id, session_date) values ($1, $2, $3, '2026-12-10') returning id`, [CLUB, TEAM, season]))[0].id;
+  });
+
+  it("crée une séance sans thème, des phases, du matériel et un thème de bibliothèque", async () => {
+    phase = (await as<{ id: string }>(db, u.assistant,
+      `insert into public.session_phases (club_id, session_id, title, block) values ($1, $2, 'Activation', 'activation') returning id`, [CLUB, s]))[0].id;
+    expect(await tryAs(db, u.assistant, `insert into public.session_equipment (club_id, session_id, item, quantity) values ($1, $2, 'Plots', 12)`, [CLUB, s])).toBeNull();
+    expect(await tryAs(db, u.assistant, `insert into public.session_equipment (club_id, session_id, item, quantity) values ($1, $2, 'Plots', 3)`, [CLUB, s])).toMatch(/duplicate|unique/i);
+    const [t] = await as<{ id: string }>(db, u.assistant, `insert into public.training_themes (club_id, name) values ($1, 'TEST Pressing') returning id`, [CLUB]);
+    expect(await tryAs(db, u.assistant, `update public.training_sessions set theme_id = $2 where id = $1`, [s, t.id])).toBeNull();
+  });
+
+  it("calcule le sRPE et contrôle les bornes", async () => {
+    await as(db, u.coach, `insert into public.training_attendance (club_id, session_id, player_id, status, minutes, rpe) values ($1, $2, $3, 'present', 75, 6)`, [CLUB, s, p1]);
+    const [r] = await as<{ srpe: number }>(db, u.coach, `select srpe from public.training_attendance where session_id = $1 and player_id = $2`, [s, p1]);
+    expect(r.srpe).toBe(450);
+    expect(await tryAs(db, u.coach, `update public.training_attendance set rpe = 11 where session_id = $1`, [s])).toMatch(/check/i);
+  });
+
+  it("refuse une phase d'une autre séance pour un exercice", async () => {
+    const other = (await as<{ id: string }>(db, u.coach,
+      `insert into public.training_sessions (club_id, team_id, season_id, session_date) values ($1, $2, $3, '2026-12-11') returning id`, [CLUB, TEAM, season]))[0].id;
+    const [ex] = await as<{ id: string }>(db, u.coach, `insert into public.exercises (club_id, title, category) values ($1, 'TEST Jeu 8c8', 'pressing') returning id`, [CLUB]);
+    expect(await tryAs(db, u.coach, `insert into public.session_exercises (club_id, session_id, exercise_id, phase_id) values ($1, $2, $3, $4)`, [CLUB, other, ex.id, phase])).toMatch(/Phase incohérente/);
+    expect(await tryAs(db, u.coach, `insert into public.session_exercises (club_id, session_id, exercise_id, phase_id, series, recovery_sec) values ($1, $2, $3, $4, 3, 60)`, [CLUB, s, ex.id, phase])).toBeNull();
+  });
+
+  it("enregistre un schéma éditable et le relie à un exercice du même club", async () => {
+    const [d] = await as<{ id: string }>(db, u.coach,
+      `insert into public.tactical_diagrams (club_id, title, data) values ($1, 'TEST schéma', '{"v":1,"pitch":{"kind":"half","style":"stripes"},"items":[],"frames":[{"id":"a","pos":{}}]}') returning id`, [CLUB]);
+    expect(await tryAs(db, u.coach, `update public.exercises set diagram_id = $1 where title = 'TEST Jeu 8c8'`, [d.id])).toBeNull();
+    expect(await tryAs(db, u.coach, `insert into public.tactical_diagrams (club_id, title, data) values ($1, 'TEST', '[]')`, [CLUB])).toMatch(/check/i);
+  });
+
+  it("verrouille phases et matériel d'une séance validée pour l'adjoint", async () => {
+    await as(db, u.coach, `update public.training_sessions set status = 'valide' where id = $1`, [s]);
+    expect(await tryAs(db, u.assistant, `update public.session_phases set title = 'Changé' where id = $1`, [phase])).toMatch(/Séance validée/);
+    expect(await tryAs(db, u.assistant, `delete from public.session_equipment where session_id = $1`, [s])).toMatch(/Séance validée/);
+    expect(await tryAs(db, u.coach, `update public.session_phases set title = 'Activation 2' where id = $1`, [phase])).toBeNull();
+  });
+
+  it("n'expose ni modèles, ni schémas, ni thèmes aux rôles sans planification", async () => {
+    for (const t of ["session_templates", "tactical_diagrams", "training_themes", "session_phases", "session_equipment"]) {
+      expect(await as(db, u.player1, `select id from public.${t}`)).toHaveLength(0);
+      expect(await as(db, u.nobody, `select id from public.${t}`)).toHaveLength(0);
+    }
+    expect(await tryAs(db, u.comm, `insert into public.session_templates (club_id, name, payload) values ($1, 'X modèle', '{}')`, [CLUB])).toMatch(/row-level security/);
+  });
+
+  it("réserve l'export des fiches aux rôles du staff sportif", async () => {
+    const has = async (id: string) => (await as<{ ok: boolean }>(db, id, `select app.has_permission($1, 'planning.export') as ok`, [CLUB]))[0].ok;
+    expect(await has(u.coach)).toBe(true);
+    expect(await has(u.tm)).toBe(true);
+    expect(await has(u.player1)).toBe(false);
+    expect(await has(u.comm)).toBe(false);
+  });
+});

@@ -1,7 +1,7 @@
 import {
   Activity, BarChart3, Bell, Bot, BookOpen, Brain, Calendar, CalendarDays, CalendarRange, ClipboardCheck,
   ClipboardList, Clapperboard, Database, Dumbbell, FileText, Flag, FolderLock, Gauge, Goal, HeartPulse,
-  KeyRound, LayoutDashboard, ListChecks, ListTodo, type LucideIcon, Map, Medal, MonitorPlay, Network,
+  KeyRound, LayoutDashboard, LayoutTemplate, PenTool, Tags, ListChecks, ListTodo, type LucideIcon, Map, Medal, MonitorPlay, Network,
   PlaySquare, Repeat, ScrollText, Settings, Shield, ShieldCheck, Shirt, Sparkles, Stethoscope, Swords,
   Target, Timer, Trophy, UserCheck, UserCog, Users, Video,
 } from "lucide-react";
@@ -51,8 +51,12 @@ export const NAVIGATION: NavSection[] = [
   {
     title: "Entraînement",
     items: [
+      { label: "Tableau de bord", icon: LayoutDashboard, href: "/entrainement", phase: 2, permission: "planning.read" },
       { label: "Fiches de séance", icon: ClipboardList, href: "/entrainement/seances", phase: 2, permission: "planning.read" },
       { label: "Bibliothèque d'exercices", icon: BookOpen, href: "/entrainement/exercices", phase: 2, permission: "planning.read" },
+      { label: "Schémas tactiques", icon: PenTool, href: "/entrainement/schemas", phase: 2, permission: "planning.read" },
+      { label: "Thèmes", icon: Tags, href: "/entrainement/themes", phase: 2, permission: "planning.read" },
+      { label: "Modèles de séance", icon: LayoutTemplate, href: "/entrainement/modeles", phase: 2, permission: "planning.read" },
       { label: "Présences", icon: ListChecks, href: "/entrainement/presences", phase: 2, permission: "planning.read" },
       { label: "Évaluation des séances", icon: ClipboardCheck, href: "/entrainement/evaluations", phase: 2, permission: "planning.read" },
       { label: "Séances vidéo", icon: MonitorPlay, phase: 4 },

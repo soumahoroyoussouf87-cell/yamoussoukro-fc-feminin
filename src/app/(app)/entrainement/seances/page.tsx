@@ -50,7 +50,7 @@ export default async function SessionsPage({ searchParams }: PageProps<"/entrain
                   <TR key={s.id} className={cn(s.session_date === today && "bg-fuchsia/5")}>
                     <TD className="font-display font-bold">{s.number}</TD>
                     <TD className="whitespace-nowrap capitalize">{dayShort(s.session_date)} {s.starts_at ? `· ${hm(s.starts_at)}` : ""}</TD>
-                    <TD><Link href={`/entrainement/seances/${s.id}`} className="font-semibold hover:underline">{s.theme}</Link>{s.sub_theme ? <span className="block text-xs text-muted-foreground">{s.sub_theme}</span> : null}</TD>
+                    <TD><Link href={`/entrainement/seances/${s.id}`} className="font-semibold hover:underline">{s.theme ?? "Séance sans thème"}</Link>{s.sub_theme ? <span className="block text-xs text-muted-foreground">{s.sub_theme}</span> : null}</TD>
                     <TD>{s.intensity ? INTENSITY_LABELS[s.intensity] : "—"}</TD>
                     <TD className="text-xs text-muted-foreground">{(s.session_exercises ?? []).length} exercice(s){dur ? ` · ${dur} min` : ""}</TD>
                     <TD className="text-xs">{(s.training_attendance ?? []).length ? `${present}/${(s.training_attendance ?? []).length}` : "—"}</TD>

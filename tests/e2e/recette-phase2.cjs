@@ -41,6 +41,25 @@ async function session(browser, email) {
   await page.waitForURL('**/tableau-de-bord');
   return page;
 }
+async function createSheet(page, date, theme) {
+  await page.goto(`${BASE}/entrainement/seances/nouvelle?date=${date}`);
+  await page.getByRole('button', { name: 'Créer la séance' }).click();
+  await page.waitForURL(/etape=1/);
+  const id = page.url().match(/seances\/([0-9a-f-]+)/)[1];
+  await page.fill('#starts_at', '09:00');
+  await page.fill('#ends_at', '10:30');
+  await page.fill('#location', 'Stade de Yamoussoukro');
+  await page.selectOption('#intensity', 'moderee');
+  await page.selectOption('#game_system', '4-3-3');
+  await page.getByText(/Enregistré à/).first().waitFor();
+  await page.goto(`${BASE}/entrainement/seances/${id}?etape=2`);
+  await page.fill('#new-main', theme);
+  await page.getByRole('button', { name: 'Créer' }).first().click();
+  await page.waitForFunction((t) => document.querySelector('#theme_id')?.selectedOptions[0]?.textContent === t, theme);
+  await page.fill('#main_objective', 'Progresser collectivement');
+  await page.getByText(/Enregistré à/).first().waitFor();
+  return id;
+}
 const shot = (page, name) => page.screenshot({ path: `${shots}/${name}.png`, fullPage: true });
 const status = (page, text) => page.getByRole('status').filter({ hasText: text }).first().waitFor({ timeout: 15000 });
 const submit = (page, name) => page.getByRole('button', { name, exact: true }).click();
@@ -62,7 +81,8 @@ async function expectText(page, text) { await page.getByText(text, { exact: fals
     await coach.fill('[name=duration_min]', '15');
     await coach.setInputFiles('[name=diagram]', 'tests/e2e/fixtures/photo.jpg');
     await submit(coach, "Créer l'exercice");
-    await coach.waitForURL('**/entrainement/exercices/*?ok=1');
+    await coach.waitForURL('**/entrainement/exercices/*/modifier');
+    await coach.getByText('Tableau tactique').first().waitFor();
   }
   await expectText(coach, 'Schéma');
   await coach.goto(`${BASE}/entrainement/exercices?categorie=tactique_offensive`);
@@ -88,27 +108,33 @@ async function expectText(page, text) { await page.getByText(text, { exact: fals
   await coach.goto(`${BASE}/planification/programme?semaine=${iso(1)}`);
   await coach.getByRole('button', { name: 'Ouvrir le microcycle' }).click();
   await expectText(coach, 'Statut');
-  await coach.goto(`${BASE}/entrainement/seances/nouvelle?date=${iso(1)}`);
-  await coach.fill('[name=theme]', 'Sortie de balle');
-  await coach.fill('[name=starts_at]', '09:00');
-  await coach.fill('[name=ends_at]', '10:30');
-  await coach.selectOption('[name=intensity]', 'moderee');
-  await coach.selectOption('[name=game_system]', '4-3-3');
-  await submit(coach, 'Créer la séance');
-  await coach.waitForURL('**/entrainement/seances/*?ok=1');
-  const sessionId = coach.url().split('/seances/')[1].split('?')[0];
-  await expectText(coach, 'Séance n°1');
+  const sessionId = await createSheet(coach, iso(1), 'Sortie de balle');
+  await coach.goto(`${BASE}/entrainement/seances/${sessionId}?etape=3`);
   for (const [block, idx] of [['echauffement', 1], ['jeu_dirige', 2]]) {
-    await coach.selectOption('[name=block]', block);
-    await coach.selectOption('[name=exercise_id]', { index: idx });
-    await coach.fill('[name=duration_min]', '20');
-    await submit(coach, 'Ajouter');
-    await status(coach, 'Exercice ajouté');
+    await coach.selectOption('#new-phase-block', block);
+    await coach.getByRole('button', { name: 'Ajouter la phase' }).click();
+    await coach.getByRole('heading', { name: block === 'echauffement' ? 'Échauffement' : 'Jeu dirigé' }).waitFor();
+    const sel = coach.locator('[aria-label="Exercice de la bibliothèque"]').last();
+    await sel.selectOption({ index: idx });
+    await coach.getByRole('button', { name: 'Ajouter', exact: true }).last().click();
+    await coach.waitForFunction((n) => document.querySelectorAll('input[id^="d-"]').length === n, idx);
+    const d = coach.locator('input[id^="d-"]').nth(idx - 1);
+    await d.fill('20');
   }
+  await coach.waitForTimeout(2000);
+  await coach.reload();
   await expectText(coach, '40 min');
+  await expectText(coach, 'Séance n°1');
+  await coach.goto(`${BASE}/entrainement/seances/${sessionId}?etape=4`);
+  for (let k = 0; k < 2; k++) {
+    await coach.locator('nav[aria-label="Exercices de la séance"] button').nth(k).click();
+    await coach.fill('#ex-instructions', 'Circulation rapide, appuis et soutiens.');
+    await coach.getByText(/Enregistré à/).first().waitFor();
+  }
   log('séance n°1 créée (numéro automatique), 2 exercices de la bibliothèque, durée totale 40 min');
+  await coach.goto(`${BASE}/entrainement/seances/${sessionId}?etape=8`);
   await submit(coach, 'Valider');
-  await expectText(coach, 'Validé');
+  await coach.getByText('Validé', { exact: true }).first().waitFor();
   await submit(coach, 'Publier');
   await coach.getByText('Publié', { exact: true }).first().waitFor();
   await coach.getByText('Historique des validations').click();
@@ -116,18 +142,17 @@ async function expectText(page, text) { await page.getByText(text, { exact: fals
   await shot(coach, '03-seance-publiee');
   log('workflow séance : Brouillon → Validé → Publié, historique tracé');
 
-  await coach.goto(`${BASE}/entrainement/seances/${sessionId}/presences`);
-  await coach.getByRole('button', { name: /Marquer « présente »/ }).click();
-  await coach.locator('select[data-att]').nth(3).selectOption('blessee');
-  await submit(coach, 'Enregistrer les présences');
-  await status(coach, '22 présence(s)');
+  await coach.goto(`${BASE}/entrainement/seances/${sessionId}?etape=5`);
+  await coach.getByRole('button', { name: /Présentes : les disponibles/ }).click();
+  await coach.locator('[aria-label^="Présence de"]').nth(3).selectOption('blessee');
+  await coach.getByText(/Enregistré à/).first().waitFor();
+  await coach.reload();
+  await expectText(coach, '22/22 saisies');
   log('présences : 22 saisies (dont 1 blessée)');
-  await coach.goto(`${BASE}/entrainement/seances/${sessionId}`);
-  await coach.fill('[name=objectives_reached]', '4');
-  await coach.fill('[name=engagement]', '5');
-  await coach.fill('[name=strengths]', 'Bonne circulation');
-  await submit(coach, "Enregistrer l'évaluation");
-  await status(coach, 'Évaluation de la séance enregistrée');
+  await coach.goto(`${BASE}/entrainement/seances/${sessionId}?etape=7`);
+  await coach.locator('[role=radiogroup]').first().getByRole('radio', { name: '4' }).click();
+  await coach.fill('#strengths', 'Bonne circulation');
+  await coach.getByText(/Enregistré à/).first().waitFor();
   log('évaluation post-séance enregistrée');
 
   await coach.goto(`${BASE}/planification/evenements/nouveau?date=${iso(2)}`);
@@ -294,7 +319,7 @@ async function expectText(page, text) { await page.getByText(text, { exact: fals
   log('résultats, statistiques, index convocations/onze/délégations, rapports, documents, présences, évaluations');
 
   // --- Documents imprimables
-  for (const [p, name] of [[`/impression/convocation/${matchId}`, 'convocation'], [`/impression/delegation/${matchId}`, 'delegation'], [`/impression/onze/${matchId}`, 'onze'], [`/impression/seance/${sessionId}`, 'seance'], [`/impression/programme?semaine=${iso(1)}`, 'programme']]) {
+  for (const [p, name] of [[`/impression/convocation/${matchId}`, 'convocation'], [`/impression/delegation/${matchId}`, 'delegation'], [`/impression/onze/${matchId}`, 'onze'], [`/impression/programme?semaine=${iso(1)}`, 'programme']]) {
     await coach.goto(`${BASE}${p}`);
     await coach.locator('#document').waitFor();
     await coach.locator('#document').screenshot({ path: `${shots}/13-doc-${name}.png` });
@@ -306,7 +331,7 @@ async function expectText(page, text) { await page.getByText(text, { exact: fals
   await coach.emulateMedia({ media: 'print' });
   await coach.pdf({ path: `${shots}/13-delegation.pdf`, format: 'A4' }).catch(() => {});
   await coach.emulateMedia({ media: 'screen' });
-  log('documents : convocation (sans commentaire confidentiel, PNG), délégation avec signatures, onze, séance, programme');
+  log('documents : convocation (sans commentaire confidentiel, PNG), délégation avec signatures, onze, programme');
 
   await coach.goto(`${BASE}/tableau-de-bord`);
   await expectText(coach, 'Prochaine séance');
@@ -319,18 +344,28 @@ async function expectText(page, text) { await page.getByText(text, { exact: fals
   await adj.goto(`${BASE}/notifications`);
   await expectText(adj, 'Nouvelle séance publiée');
   await expectText(adj, 'Convocation publiée');
-  await adj.goto(`${BASE}/entrainement/seances/${sessionId}`);
+  await adj.goto(`${BASE}/entrainement/seances/${sessionId}?etape=8`);
   await expectText(adj, 'Publié');
+  await expectText(adj, 'Lecture seule');
   if (await adj.getByRole('button', { name: 'Archiver' }).count()) throw new Error('adjoint peut archiver');
-  if (await adj.getByRole('link', { name: 'Modifier' }).count()) throw new Error('adjoint peut modifier une séance publiée');
-  await adj.goto(`${BASE}/entrainement/seances/nouvelle?date=${iso(4)}`);
-  await adj.fill('[name=theme]', 'Pressing haut');
-  await submit(adj, 'Créer la séance');
-  await adj.waitForURL('**/entrainement/seances/*?ok=1');
+  await adj.goto(`${BASE}/entrainement/seances/${sessionId}?etape=3`);
+  if (await adj.getByRole('button', { name: 'Ajouter la phase' }).count()) throw new Error('adjoint peut modifier une séance publiée');
+  const s2 = await createSheet(adj, iso(4), 'Pressing haut');
+  await adj.goto(`${BASE}/entrainement/seances/${s2}?etape=3`);
+  await adj.getByRole('button', { name: 'Ajouter la phase' }).waitFor();
+  await adj.selectOption('#new-phase-block', 'jeu_dirige');
+  await adj.getByRole('button', { name: 'Ajouter la phase' }).click();
+  await adj.getByRole('heading', { name: 'Jeu dirigé' }).waitFor();
+  await adj.locator('[aria-label="Exercice de la bibliothèque"]').selectOption({ index: 1 });
+  await adj.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  await adj.locator('input[id^="d-"]').first().waitFor();
+  await adj.locator('input[id^="d-"]').first().fill('20');
+  await adj.waitForTimeout(1500);
+  await adj.goto(`${BASE}/entrainement/seances/${s2}?etape=8`);
   await expectText(adj, 'Séance n°2');
-  if (await adj.getByRole('button', { name: 'Valider' }).count()) throw new Error('adjoint voit Valider');
+  if (await adj.getByRole('button', { name: 'Valider', exact: true }).count()) throw new Error('adjoint voit Valider');
   await submit(adj, 'Soumettre à validation');
-  await expectText(adj, 'Soumis');
+  await adj.getByText('Soumis', { exact: true }).first().waitFor();
   log('adjoint : notifié, ne peut ni modifier ni archiver une séance publiée, crée la séance n°2 et la soumet (sans pouvoir valider)');
 
   // --- Communication

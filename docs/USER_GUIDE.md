@@ -45,3 +45,13 @@ Toutes les valeurs proviennent des données saisies. « Non évalué » signifie
 - **Délégation** : importer les convoquées, ajouter le staff, imprimer le document officiel avec signatures.
 - **Direct** : saisir buts, passes, cartons, remplacements à la minute, puis reporter le score.
 - **Classement** : saisie par équipe, contrôlée (V+N+D=J).
+
+## Fiches de séance (mise à jour du 27/11/2026)
+1. **Créer** : Entraînement › Fiches de séance › Créer une séance. Choisir la date et, si besoin, un modèle.
+2. **Remplir les 8 étapes** dans l'ordre ou librement ; tout est enregistré automatiquement (« Enregistré à … »).
+   - Étape 3 : ajouter les phases puis les exercices ; glisser-déposer pour réorganiser. Les horaires se calculent seuls.
+   - Étape 4 : compléter les consignes et dessiner le schéma (choisir un outil puis toucher le terrain ; glisser pour les flèches et les zones). « Étape » + « Animer » pour montrer un déplacement.
+   - Étapes 5 et 6 : présences, puis minutes et RPE après la séance (le sRPE se calcule seul).
+   - Étape 7 : noter les critères de 1 à 5 (« N.O. » si non observé) et rédiger le bilan.
+3. **Valider et exporter** (étape 8) : la liste de contrôle indique ce qui manque. Choisir un modèle, puis Aperçu, Imprimer, PDF, JPEG 300 DPI, Version WhatsApp, PNG HD, ZIP ou Partager.
+4. **Réutiliser** : « Dupliquer » vers une autre date ou « Enregistrer comme modèle ».

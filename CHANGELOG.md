@@ -1,5 +1,22 @@
 # Journal des modifications
 
+## [0.3.0] — 2026-11-27 — Fiches de séance professionnelles
+
+### Ajouté
+- Migration 009 (compatible, aucune colonne supprimée) : phases de séance, thèmes et sous-thèmes, matériel, schémas tactiques éditables (données JSON), modèles de séance, minutes / RPE / sRPE par joueuse, évaluation par critères et bilan du staff, permission `planning.export`.
+- Fiche de séance en 8 étapes avec sauvegarde automatique, barre de progression et contrôle de complétude (soumission et validation bloquées tant que les points obligatoires manquent).
+- Construction par phases (nombre libre) et exercices : glisser-déposer, flèches sur mobile, durées calculées (séries, récupérations, pauses), horaires de début et de fin automatiques, alerte de dépassement de l'horaire.
+- Contenu pédagogique complet des exercices (organisation, déroulement, consignes, contraintes, critères de réalisation et de réussite, points de coaching, variantes, vidéos).
+- Tableau tactique 2D : terrains (entier, demi, tiers, surface, zone libre), joueuses par équipe, gardiennes, ballon, plots, coupelles, mannequins, mini-buts, buts, piquets, échelles, haies, flèches (déplacement, passe, conduite, frappe, courbes), zones hachurées, cotes, annotations, étapes animées, annuler / rétablir, raccourcis clavier, import / export des données, export PNG, JPEG, SVG.
+- Effectif (disponibilité du jour, présence, participation), matériel repris des schémas, charge prévue et réalisée (RPE, sRPE, moyennes), liens vidéo.
+- 6 modèles imprimables (fiche complète, fiche terrain, fiche résumée, compte rendu, fiche exercice, programme de la semaine) en A4 / A3, portrait / paysage, avec en-tête officiel, saison, numéro de séance, pagination et état de validation. Aperçu, impression, PDF (texte sélectionnable, schémas vectoriels), JPEG 300 DPI, version WhatsApp, PNG HD, ZIP de toutes les pages, partage.
+- Duplication, modèles de séance, bibliothèques des thèmes et des schémas, tableau de bord Entraînement (assiduité, charge hebdomadaire, évaluations).
+
+### Modifié
+- Les anciennes pages « Modifier » et « Présences » d'une séance, et l'impression HTML, redirigent vers l'étape correspondante de la fiche.
+- Menu latéral : l'entrée la plus précise est seule mise en évidence.
+
+
 ## [0.2.0] — 2026-11-26 — Phase 2 « Sport management »
 
 ### Ajouté
