@@ -233,7 +233,7 @@ function Card({ p, w, h, showNumber, showPosition }: { p: PosterPlayer; w: numbe
       )}
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: "52%", background: `linear-gradient(180deg, rgba(7,22,46,0) 0%, rgba(7,22,46,0.82) 42%, ${NIGHT} 70%)` }} />
       {showNumber && p.shirt != null ? (
-        <span style={{ position: "absolute", top: w * 0.04, left: w * 0.06, fontFamily: DISPLAY, fontWeight: 800, fontSize: w * 0.24, lineHeight: 1, color: "#fff", textShadow: "0 2px 6px rgba(0,0,0,0.55)" }}>{p.shirt}</span>
+        <span style={{ position: "absolute", top: w * 0.04, left: w * 0.06, fontFamily: DISPLAY, fontWeight: 800, fontSize: w * 0.24, lineHeight: 1, color: FUCHSIA, textShadow: "0 2px 6px rgba(7,22,46,0.75), 0 0 1px rgba(255,255,255,0.8)" }}>{p.shirt}</span>
       ) : null}
       <img src={LOGO} alt="" style={{ position: "absolute", top: w * 0.05, right: w * 0.05, width: w * 0.17, height: "auto", filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.4))" }} />
       <div style={{ position: "absolute", left: 4, right: 4, bottom: w * 0.07, textAlign: "center", color: "#fff" }}>
