@@ -41,6 +41,7 @@ Toutes les valeurs proviennent des données saisies. « Non évalué » signifie
 ## Phase 2 — Compétition
 - **Rencontres** : créer le match (adversaire, date, lieu). Chaque rencontre a ses onglets : Convocations, Onze, Délégation, Direct, Rapport.
 - **Convocations** : le compteur bloque au-delà de la limite de la compétition (18 par défaut). Le commentaire confidentiel reste réservé au staff habilité.
+- **Affiche des convoquées** : bouton « Affiche des convoquées » dans l'onglet Convocation. Logo, titre modifiable, match, puis une carte par joueuse convoquée (photo, numéro, prénom, NOM, poste). Formats portrait 4:5, carré, story 9:16 ; exports PNG HD, JPEG HD, version WhatsApp et partage direct sur téléphone. Tant que la convocation n'est pas validée, l'affiche porte la mention « Provisoire ».
 - **Onze de départ** : toucher un poste puis une joueuse (ou la glisser). Désigner capitaine et tireuses. Une version « provisoire » est confidentielle ; « Communiquer » la rend visible au rôle communication. Export PNG disponible.
 - **Délégation** : importer les convoquées, ajouter le staff, imprimer le document officiel avec signatures.
 - **Direct** : saisir buts, passes, cartons, remplacements à la minute, puis reporter le score.
