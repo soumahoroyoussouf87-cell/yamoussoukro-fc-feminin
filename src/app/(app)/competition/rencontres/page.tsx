@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TeamLogo } from "@/components/phase2/team-logo";
 import { Plus, Trophy } from "lucide-react";
 import { can, requirePermission } from "@/lib/auth";
 import { getScope, listMatches } from "@/lib/phase2/data";
@@ -33,7 +34,7 @@ export default async function MatchesPage() {
                 <TR key={m.id} className={m.id === next?.id ? "bg-fuchsia/5" : undefined}>
                   <TD className="whitespace-nowrap capitalize">{dayShort(dayOf(m.kickoff_at))} · {timeOf(m.kickoff_at)}</TD>
                   <TD>{m.matchday ?? "—"}</TD>
-                  <TD><Link href={`/competition/rencontres/${m.id}`} className="font-semibold hover:underline">{m.opponent}</Link><span className="block text-xs text-muted-foreground">{HOME_AWAY_LABELS[m.home_away]}{m.venue ? ` · ${m.venue}` : ""}</span></TD>
+                  <TD><Link href={`/competition/rencontres/${m.id}`} className="inline-flex items-center gap-2 font-semibold hover:underline"><TeamLogo name={m.opponent} path={m.opponentLogo} />{m.opponent}</Link><span className="block text-xs text-muted-foreground">{HOME_AWAY_LABELS[m.home_away]}{m.venue ? ` · ${m.venue}` : ""}</span></TD>
                   <TD>{m.competition ?? "—"}</TD>
                   <TD className="font-display text-lg font-bold tabular-nums">{m.status === "joue" ? `${m.goals_for} – ${m.goals_against}` : "—"}</TD>
                   <TD>{m.id === next?.id ? <Badge>Prochain match</Badge> : <Badge variant={m.status === "joue" ? "success" : m.status === "programme" ? "outline" : "warning"}>{MATCH_STATUS_LABELS[m.status]}</Badge>}</TD>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TeamLogo } from "@/components/phase2/team-logo";
 import {
   AlertTriangle, CalendarClock, CheckCircle2, CircleSlash, Clapperboard, ClipboardList, FileBarChart, Goal, Lock,
   Shield, Shirt, ShieldAlert, Target, Trophy, UserPlus, Users, UserX, Video,
@@ -220,7 +221,7 @@ export default async function DashboardPage() {
           <CardContent>
             {d.nextMatch ? (
               <div>
-                <Link href="/competition/match-center" className="font-display text-2xl font-bold uppercase hover:underline">{d.nextMatch.opponent}</Link>
+                <Link href="/competition/match-center" className="inline-flex items-center gap-3 font-display text-2xl font-bold uppercase hover:underline"><TeamLogo name={d.nextMatch.opponent} path={d.nextMatch.opponentLogo} size={40} />{d.nextMatch.opponent}</Link>
                 <p className="text-sm text-muted-foreground">
                   {formatDateTime(d.nextMatch.kickoff_at)} · {d.nextMatch.home_away === "domicile" ? "Domicile" : d.nextMatch.home_away === "exterieur" ? "Extérieur" : "Terrain neutre"}
                   {d.nextMatch.venue ? ` · ${d.nextMatch.venue}` : ""}

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { TeamLogo } from "@/components/phase2/team-logo";
 import { requirePermission } from "@/lib/auth";
 import { getMatch, matchTitle } from "@/lib/phase2/data";
 import { dayLong, dayOf, HOME_AWAY_LABELS, MATCH_STATUS_LABELS, timeOf, todayIso } from "@/lib/phase2/labels";
@@ -19,7 +20,11 @@ export default async function MatchLayout({ children, params }: LayoutProps<"/co
       <div className="hero-gradient mb-4 rounded-2xl p-5 text-white">
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-fuchsia">Match Center{m.competitions?.name ? ` · ${m.competitions.name}` : ""}{m.matchday ? ` · ${m.matchday}` : ""}</p>
         <div className="mt-1 flex flex-wrap items-end justify-between gap-3">
-          <h1 className="font-display text-3xl font-extrabold uppercase sm:text-4xl">{matchTitle(m)}</h1>
+          <div className="flex items-center gap-3">
+            <TeamLogo name="Yamoussoukro FC" path="/brand/logo-officiel-yfc.png" size={52} className={m.home_away === "exterieur" ? "order-3" : ""} />
+            <TeamLogo name={m.opponents?.name ?? "Adversaire"} path={m.opponents?.logo_path} size={52} className="order-2" />
+            <h1 className="order-4 font-display text-3xl font-extrabold uppercase sm:text-4xl">{matchTitle(m)}</h1>
+          </div>
           {m.status === "joue" ? <p className="font-display text-5xl font-extrabold tabular-nums">{m.home_away === "exterieur" ? `${m.goals_against} – ${m.goals_for}` : `${m.goals_for} – ${m.goals_against}`}</p> : null}
         </div>
         <p className="mt-1 text-sm text-white/80">

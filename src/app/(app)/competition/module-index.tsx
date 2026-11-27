@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TeamLogo } from "@/components/phase2/team-logo";
 import { Trophy } from "lucide-react";
 import type { AccessContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -53,7 +54,7 @@ export async function ModuleIndex({ ctx, module }: { ctx: AccessContext; module:
           {rows.map((m) => (
             <TR key={m.id}>
               <TD className="whitespace-nowrap capitalize">{dayShort(dayOf(m.kickoff_at))} · {timeOf(m.kickoff_at)}</TD>
-              <TD><Link href={`/competition/rencontres/${m.id}/${sub}`} className="font-semibold hover:underline">{m.opponent}</Link>{m.matchday ? <span className="ml-2 text-xs text-muted-foreground">{m.matchday}</span> : null}</TD>
+              <TD><Link href={`/competition/rencontres/${m.id}/${sub}`} className="inline-flex items-center gap-2 font-semibold hover:underline"><TeamLogo name={m.opponent} path={m.opponentLogo} />{m.opponent}</Link>{m.matchday ? <span className="ml-2 text-xs text-muted-foreground">{m.matchday}</span> : null}</TD>
               <TD>{state.get(m.id) ?? <span className="text-xs text-muted-foreground">Non créé</span>}</TD>
             </TR>
           ))}

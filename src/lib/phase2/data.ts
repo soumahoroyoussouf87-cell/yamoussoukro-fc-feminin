@@ -36,20 +36,20 @@ export const dayEnd = (iso: string) => `${addDays(iso, 1)}T00:00:00Z`;
 
 export type MatchRow = {
   id: string; kickoff_at: string; venue: string | null; home_away: string; matchday: string | null; status: string;
-  goals_for: number | null; goals_against: number | null; opponent: string; competition: string | null; competition_id: string | null;
+  goals_for: number | null; goals_against: number | null; opponent: string; opponentLogo: string | null; competition: string | null; competition_id: string | null;
 };
 
-const MATCH_SELECT = "id, kickoff_at, venue, home_away, matchday, status, goals_for, goals_against, competition_id, opponents(name), competitions(name)";
+const MATCH_SELECT = "id, kickoff_at, venue, home_away, matchday, status, goals_for, goals_against, competition_id, opponents(name, logo_path), competitions(name)";
 
 type RawMatch = {
   id: string; kickoff_at: string; venue: string | null; home_away: string; matchday: string | null; status: string;
   goals_for: number | null; goals_against: number | null; competition_id: string | null;
-  opponents: { name: string } | null; competitions: { name: string } | null;
+  opponents: { name: string; logo_path: string | null } | null; competitions: { name: string } | null;
 };
 const toMatch = (m: RawMatch): MatchRow => ({
   id: m.id, kickoff_at: m.kickoff_at, venue: m.venue, home_away: m.home_away, matchday: m.matchday, status: m.status,
   goals_for: m.goals_for, goals_against: m.goals_against, competition_id: m.competition_id,
-  opponent: m.opponents?.name ?? "Adversaire", competition: m.competitions?.name ?? null,
+  opponent: m.opponents?.name ?? "Adversaire", opponentLogo: m.opponents?.logo_path ?? null, competition: m.competitions?.name ?? null,
 });
 
 export async function listMatches(ctx: AccessContext, opts: { from?: string; to?: string; seasonId?: string | null; ascending?: boolean } = {}) {
@@ -67,7 +67,7 @@ export async function getMatch(id: string) {
   const supabase = await createClient();
   const { data } = await supabase
     .from("matches")
-    .select("*, opponents(name, city), competitions(name, squad_size_limit)")
+    .select("*, opponents(name, city, logo_path), competitions(name, squad_size_limit)")
     .eq("id", id)
     .maybeSingle();
   return data;

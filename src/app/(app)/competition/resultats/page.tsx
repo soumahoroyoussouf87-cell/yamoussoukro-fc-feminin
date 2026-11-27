@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TeamLogo } from "@/components/phase2/team-logo";
 import { Flag } from "lucide-react";
 import { requirePermission } from "@/lib/auth";
 import { getScope, listMatches } from "@/lib/phase2/data";
@@ -44,7 +45,7 @@ export default async function ResultsPage() {
                   return (
                     <TR key={m.id}>
                       <TD className="capitalize">{dayShort(dayOf(m.kickoff_at))}</TD>
-                      <TD><Link href={`/competition/rencontres/${m.id}/rapport`} className="font-semibold hover:underline">{m.opponent}</Link>{m.matchday ? <span className="ml-2 text-xs text-muted-foreground">{m.matchday}</span> : null}</TD>
+                      <TD><Link href={`/competition/rencontres/${m.id}/rapport`} className="inline-flex items-center gap-2 font-semibold hover:underline"><TeamLogo name={m.opponent} path={m.opponentLogo} />{m.opponent}</Link>{m.matchday ? <span className="ml-2 text-xs text-muted-foreground">{m.matchday}</span> : null}</TD>
                       <TD>{HOME_AWAY_LABELS[m.home_away]}</TD>
                       <TD className="font-display text-lg font-bold tabular-nums">{m.goals_for} – {m.goals_against}</TD>
                       <TD><Badge variant={res === "Victoire" ? "success" : res === "Nul" ? "outline" : "danger"}>{res}</Badge></TD>

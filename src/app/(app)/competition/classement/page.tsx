@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TeamLogo } from "@/components/phase2/team-logo";
 import { Medal, Pencil, Trash2 } from "lucide-react";
 import { can, requirePermission } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -40,6 +41,10 @@ export default async function StandingsPage({ searchParams }: PageProps<"/compet
   const supabase = await createClient();
   const { data } = comp ? await supabase.from("standings").select("*").eq("competition_id", comp.id).order("position") : { data: [] };
   const rows = data ?? [];
+  const { data: opps } = await supabase.from("opponents").select("name, logo_path").eq("club_id", ctx.clubId);
+  const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const logos = new Map((opps ?? []).map((o) => [norm(o.name), o.logo_path]));
+  const logoOf = (r: { team_name: string; is_own_team: boolean }) => (r.is_own_team ? "/brand/logo-officiel-yfc.png" : logos.get(norm(r.team_name)) ?? null);
   const write = can(ctx, "matches.write");
   const editing = typeof sp.modifier === "string" ? rows.find((r) => r.id === sp.modifier) : undefined;
   const asOf = rows.reduce<string | null>((a, r) => (!a || r.as_of > a ? r.as_of : a), null);
@@ -57,7 +62,7 @@ export default async function StandingsPage({ searchParams }: PageProps<"/compet
               {rows.map((r) => (
                 <TR key={r.id} className={cn(r.is_own_team && "bg-fuchsia/10 font-semibold")}>
                   <TD className="font-display text-lg font-bold">{r.position}</TD>
-                  <TD>{r.team_name}</TD>
+                  <TD><span className="inline-flex items-center gap-2"><TeamLogo name={r.team_name} path={logoOf(r)} />{r.team_name}</span></TD>
                   {[r.played, r.won, r.drawn, r.lost, r.goals_for, r.goals_against].map((n, i) => <TD key={i} className="text-center tabular-nums">{n}</TD>)}
                   <TD className="text-center tabular-nums">{r.goals_for - r.goals_against > 0 ? "+" : ""}{r.goals_for - r.goals_against}</TD>
                   <TD className="text-center font-display text-lg font-bold tabular-nums">{r.points}</TD>

@@ -11,7 +11,7 @@ export type DashboardData = {
   lines: { line: string; label: string; count: number }[];
   withoutPosition: number;
   record: MatchRecord | null;
-  nextMatch: { kickoff_at: string; opponent: string; home_away: string; venue: string | null } | null;
+  nextMatch: { kickoff_at: string; opponent: string; opponentLogo: string | null; home_away: string; venue: string | null } | null;
   alerts: { level: "danger" | "warning"; text: string; href: string }[];
   staffActive: number;
 };
@@ -108,7 +108,7 @@ export async function getDashboardData(ctx: AccessContext, club: ClubHeader): Pr
   if (canMatches && club.season) {
     const { data: matches } = await supabase
       .from("matches")
-      .select("status, goals_for, goals_against, kickoff_at, home_away, venue, competition_id, opponents(name)")
+      .select("status, goals_for, goals_against, kickoff_at, home_away, venue, competition_id, opponents(name, logo_path)")
       .eq("season_id", club.season.id)
       .order("kickoff_at");
     const scoped = (matches ?? []).filter((m) => !club.competition || m.competition_id === club.competition.id);
@@ -118,6 +118,7 @@ export async function getDashboardData(ctx: AccessContext, club: ClubHeader): Pr
       nextMatch = {
         kickoff_at: upcoming.kickoff_at,
         opponent: (upcoming.opponents as { name: string } | null)?.name ?? "Adversaire",
+        opponentLogo: (upcoming.opponents as { logo_path: string | null } | null)?.logo_path ?? null,
         home_away: upcoming.home_away,
         venue: upcoming.venue,
       };
