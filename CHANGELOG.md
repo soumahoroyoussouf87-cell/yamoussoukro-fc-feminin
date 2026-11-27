@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [0.3.2] — 2026-11-27 — Affiche du onze de départ
+
+### Ajouté
+- Affiche partageable du onze de départ (onglet Onze de départ › « Affiche du onze ») : terrain vu de dessus, titulaires placées selon le tableau du onze, photo, numéro de dossard en rose, nom, capitaine ; système, remplaçantes et capitaine en option. Formats 4:5, carré, story ; exports PNG / JPEG HD, WhatsApp, partage.
+
+### Modifié
+- Affiche des convoquées : numéros de dossard en rose ; barre d'outils et exports mis en commun avec l'affiche du onze.
+
 ## [0.3.1] — 2026-11-27 — Affiche des convoquées
 
 ### Ajouté

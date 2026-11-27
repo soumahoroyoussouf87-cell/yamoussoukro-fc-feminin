@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Lock, Plus, Printer, Shirt } from "lucide-react";
+import { ImageIcon, Lock, Plus, Printer, Shirt } from "lucide-react";
 import { can, requirePermission } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getMatch, listPlayerOptions, matchTitle } from "@/lib/phase2/data";
@@ -63,6 +63,7 @@ export default async function LineupPage({ params, searchParams }: PageProps<"/c
         {canWrite ? <Button asChild size="sm" variant={wantNew ? "secondary" : "outline"}><Link href="?compo=nouvelle"><Plus />Nouvelle composition</Link></Button> : null}
         <span className="flex-1" />
         {current ? <Button asChild size="sm" variant="outline"><Link href={`/impression/onze/${id}?compo=${current.id}`} target="_blank"><Printer />Imprimer / PDF</Link></Button> : null}
+        {current ? <Button asChild size="sm"><Link href={`/impression/affiche-onze/${id}?compo=${current.id}`} target="_blank"><ImageIcon />Affiche du onze</Link></Button> : null}
       </div>
       {readDraft && initial.status === "provisoire" ? (
         <p className="flex items-center gap-2 rounded-md bg-warning/10 px-3 py-2 text-sm font-medium text-warning"><Lock className="size-4" />Composition provisoire : confidentielle, jamais officielle tant qu&apos;elle n&apos;est pas validée.</p>
