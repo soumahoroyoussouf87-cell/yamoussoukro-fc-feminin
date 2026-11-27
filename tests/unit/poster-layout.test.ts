@@ -29,3 +29,24 @@ describe("affiche des convoquées : grille", () => {
     expect(g.rows.slice(0, -1).every((r) => r === g.cols)).toBe(true);
   });
 });
+
+describe("affiche du onze : placement sur le terrain", () => {
+  it("gardienne en bas au centre, attaquante en haut", async () => {
+    const { pitchPoint } = await import("@/lib/phase2/poster-layout");
+    const { FORMATIONS } = await import("@/lib/domain/formations");
+    for (const slots of Object.values(FORMATIONS)) {
+      for (const s of slots) {
+        const p = pitchPoint(s.x, s.y);
+        expect(p.x).toBeGreaterThanOrEqual(0);
+        expect(p.x).toBeLessThanOrEqual(1);
+        expect(p.y).toBeGreaterThanOrEqual(0);
+        expect(p.y).toBeLessThanOrEqual(1);
+      }
+    }
+    const gk = pitchPoint(50, 92);
+    expect(gk.x).toBe(0.5);
+    expect(gk.y).toBe(1);
+    expect(pitchPoint(50, 16).y).toBeLessThan(0.05);
+    expect(pitchPoint(null, null)).toEqual({ x: 0.5, y: 36 / 78 });
+  });
+});

@@ -34,3 +34,13 @@ export function posterGrid(count: number, width: number, height: number, opts: {
   const rowHeight = (height - (rows.length - 1) * gap) / Math.max(1, rows.length);
   return { cols, cardWidth, cardHeight: Math.floor(Math.min(cardWidth * maxRatio, rowHeight)), rows: count ? rows : [] };
 }
+
+/**
+ * Position d'une joueuse du onze sur le terrain de l'affiche (0 à 1 sur chaque axe).
+ * Les systèmes placent les joueuses entre ~10 % et ~92 % : on étire cette plage pour occuper tout le terrain,
+ * sans sortir du cadre. y = 0 en haut (attaque), 1 en bas (gardienne).
+ */
+export function pitchPoint(x: number | null, y: number | null) {
+  const clamp = (v: number) => Math.min(1, Math.max(0, v));
+  return { x: clamp(((x ?? 50) - 10) / 80), y: clamp(((y ?? 50) - 14) / 78) };
+}
