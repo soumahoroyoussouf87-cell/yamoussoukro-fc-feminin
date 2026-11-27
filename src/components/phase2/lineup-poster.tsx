@@ -112,7 +112,7 @@ function Token({ p, tw, cx, cy }: { p: LineupPosterPlayer; tw: number; cx: numbe
     <div style={{ position: "absolute", left: cx - w / 2, top: cy - tw * 0.42, width: w, display: "flex", flexDirection: "column", alignItems: "center" }}>
       <div style={{ position: "relative", width: w, height: photo + tw * 0.06, display: "flex", justifyContent: "center" }}>
         {p.shirt != null ? (
-          <span style={{ ...SHIRT_STYLE, position: "absolute", right: w / 2 + photo * 0.26, top: tw * 0.06 + photo * 0.5 - tw * 0.34, fontSize: tw * 0.62, letterSpacing: "-0.02em", zIndex: 2, textShadow: "0 3px 8px rgba(7,22,46,0.9), 0 0 2px rgba(255,255,255,0.9)" }}>{p.shirt}</span>
+          <span style={{ ...SHIRT_STYLE, position: "absolute", right: w / 2 + photo * 0.26, top: tw * 0.06 + photo * 0.5 - tw * 0.34, fontSize: tw * 0.62, letterSpacing: "-0.02em", zIndex: 2, color: "#fff", textShadow: "0 3px 10px rgba(7,22,46,0.95)" }}>{p.shirt}</span>
         ) : null}
         <div style={{ position: "relative", marginTop: tw * 0.06, width: photo, height: photo, borderRadius: "50%", overflow: "hidden", border: "4px solid #fff", background: `linear-gradient(165deg, #0b4fb8, ${NIGHT})`, boxShadow: "0 6px 16px rgba(0,0,0,0.45)" }}>
           {p.photo ? (
