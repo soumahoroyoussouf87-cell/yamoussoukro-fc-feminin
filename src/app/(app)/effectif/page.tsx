@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserPlus, Users } from "lucide-react";
+import { ImageUp, UserPlus, Users } from "lucide-react";
 import { can, requirePermission } from "@/lib/auth";
 import { ADMIN_STATUS_LABELS, AVAILABILITY_LABELS, availabilityVariant, listSquad } from "@/lib/data/players";
 import { PageHeader } from "@/components/ui/page-header";
@@ -48,7 +48,7 @@ export default async function SquadPage({ searchParams }: PageProps<"/effectif">
         description={`${all.length} fiche(s) ${archived ? "archivée(s)" : "active(s)"}.`}
         actions={
           can(ctx, "players.write") && !archived ? (
-            <Button asChild><Link href="/effectif/nouvelle"><UserPlus />Ajouter une joueuse</Link></Button>
+            <div className="flex flex-wrap gap-2"><Button asChild variant="outline"><Link href="/effectif/photos"><ImageUp />Importer les photos</Link></Button><Button asChild><Link href="/effectif/nouvelle"><UserPlus />Ajouter une joueuse</Link></Button></div>
           ) : null
         }
       />
