@@ -62,8 +62,11 @@ export function PosterStudio({ filename, defaultTitle, background, draftNotice, 
   async function render(kind: "png" | "jpeg-hd" | "whatsapp") {
     const node = poster.current!;
     await document.fonts.ready;
+    // Toutes les images (photos, logos) doivent être décodées avant la capture.
+    await Promise.all(Array.from(node.querySelectorAll("img")).map((i) => (i.complete ? Promise.resolve() : i.decode().catch(() => undefined))));
     const opts = { width: f.width, height: f.height, cacheBust: false, style: { transform: "none" }, backgroundColor: background };
     // Premier rendu à blanc : certains navigateurs (Safari) n'intègrent les images qu'au second passage.
+    await toPng(node, { ...opts, pixelRatio: 0.2 });
     await toPng(node, { ...opts, pixelRatio: 0.2 });
     const url = kind === "png" ? await toPng(node, { ...opts, pixelRatio: 2 })
       : await toJpeg(node, { ...opts, pixelRatio: kind === "whatsapp" ? 1 : 2, quality: kind === "whatsapp" ? 0.86 : 0.95 });

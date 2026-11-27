@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useState } from "react";
-import { cutout } from "./cutout";
+import { tokenPhoto } from "./cutout";
 import { POSTER_FORMATS, pitchPoint, type PosterFormat } from "@/lib/phase2/poster-layout";
 import { DISPLAY, DraftRibbon, FUCHSIA, LOGO, MatchStrip, NIGHT, PosterStudio, ROYAL, SHIRT_STYLE, TEXT, type PosterMatch } from "./poster-studio";
 
@@ -10,10 +10,6 @@ export type LineupPosterPlayer = { id: string; firstName: string; lastName: stri
 export type LineupPosterBench = { id: string; lastName: string; shirt: number | null };
 
 const PAD = 36;
-/** Fondu des bords de la photo (ellipse) : la joueuse se détache sans cercle autour. */
-const FADE = "radial-gradient(ellipse 50% 52% at 50% 46%, #000 62%, transparent 100%)";
-/** Photo détourée : seul le bas (buste) est fondu. */
-const FADE_BOTTOM = "linear-gradient(180deg, #000 72%, transparent 100%)";
 
 export function LineupPoster({ starters, bench, system, match, draft, empty }: {
   starters: LineupPosterPlayer[]; bench: LineupPosterBench[]; system: string; match: PosterMatch; draft: boolean; empty: string | null;
@@ -111,7 +107,7 @@ function Poster({ starters, bench, system, match, format, title, draft }: {
 
 function Token({ p, tw, cx, cy }: { p: LineupPosterPlayer; tw: number; cx: number; cy: number }) {
   const w = tw * 1.3;
-  const cut = useCutout(p.photo);
+  const cut = useTokenPhoto(p.photo);
   // Photo sans cadre : bords fondus dans le terrain (effet « détouré »).
   const photo = tw * 0.8;
   const photoH = photo * 1.02;
@@ -124,9 +120,9 @@ function Token({ p, tw, cx, cy }: { p: LineupPosterPlayer; tw: number; cx: numbe
         {p.shirt != null ? (
           <span style={{ ...SHIRT_STYLE, position: "absolute", right: w / 2 + photo * 0.2, top: photoH * 0.5 - tw * 0.36, fontSize: tw * 0.66, letterSpacing: "-0.02em", zIndex: 2, color: "#fff", textShadow: "0 3px 10px rgba(7,22,46,0.95)" }}>{p.shirt}</span>
         ) : null}
-        <div style={{ position: "relative", width: photo, height: photoH, overflow: "hidden", WebkitMaskImage: cut ? FADE_BOTTOM : FADE, maskImage: cut ? FADE_BOTTOM : FADE }}>
+        <div style={{ position: "relative", width: photo, height: photoH, overflow: "hidden" }}>
           {p.photo ? (
-            <img src={cut ?? p.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 18%", filter: cut ? "drop-shadow(0 6px 10px rgba(0,0,0,0.45))" : undefined }} />
+            <img src={cut ?? p.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 18%" }} />
           ) : (
             <span style={{ display: "flex", width: photo * 0.78, height: photo * 0.78, margin: `${photo * 0.1}px auto 0`, borderRadius: "50%", alignItems: "center", justifyContent: "center", fontFamily: DISPLAY, fontWeight: 800, fontSize: photo * 0.34, color: "rgba(255,255,255,0.6)", background: `linear-gradient(165deg, #0b4fb8, ${NIGHT})` }}>{initials}</span>
           )}
@@ -141,13 +137,13 @@ function Token({ p, tw, cx, cy }: { p: LineupPosterPlayer; tw: number; cx: numbe
   );
 }
 
-/** Photo détourée dans le navigateur (fond uni retiré) ; null tant qu'elle n'est pas prête ou si le fond est chargé. */
-function useCutout(src: string | null) {
+/** Photo préparée dans le navigateur (fond retiré ou bords fondus, à 2× pour l'export HD) ; la photo brute en attendant. */
+function useTokenPhoto(src: string | null) {
   const [out, setOut] = useState<{ src: string; url: string | null } | null>(null);
   useEffect(() => {
     if (!src) return;
     let alive = true;
-    cutout(src).then((url) => { if (alive) setOut({ src, url }); }).catch(() => { if (alive) setOut({ src, url: null }); });
+    tokenPhoto(src, 400, 408).then((url) => { if (alive) setOut({ src, url }); }).catch(() => { if (alive) setOut({ src, url: null }); });
     return () => { alive = false; };
   }, [src]);
   return out && out.src === src ? out.url : null;
