@@ -1,7 +1,8 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { cutout } from "./cutout";
 import { POSTER_FORMATS, pitchPoint, type PosterFormat } from "@/lib/phase2/poster-layout";
 import { DISPLAY, DraftRibbon, FUCHSIA, LOGO, MatchStrip, NIGHT, PosterStudio, ROYAL, SHIRT_STYLE, TEXT, type PosterMatch } from "./poster-studio";
 
@@ -9,6 +10,10 @@ export type LineupPosterPlayer = { id: string; firstName: string; lastName: stri
 export type LineupPosterBench = { id: string; lastName: string; shirt: number | null };
 
 const PAD = 36;
+/** Fondu des bords de la photo (ellipse) : la joueuse se détache sans cercle autour. */
+const FADE = "radial-gradient(ellipse 50% 52% at 50% 46%, #000 62%, transparent 100%)";
+/** Photo détourée : seul le bas (buste) est fondu. */
+const FADE_BOTTOM = "linear-gradient(180deg, #000 72%, transparent 100%)";
 
 export function LineupPoster({ starters, bench, system, match, draft, empty }: {
   starters: LineupPosterPlayer[]; bench: LineupPosterBench[]; system: string; match: PosterMatch; draft: boolean; empty: string | null;
@@ -41,10 +46,10 @@ function Poster({ starters, bench, system, match, format, title, draft }: {
   const benchH = bench.length ? (format === "story" ? 120 : 84) : 0;
   const pitch = { left: PAD, top: f.header + 4, width: f.width - PAD * 2, height: f.height - f.header - f.footer - benchH - 24 };
   // Taille d'une joueuse : limitée par la largeur (5 de front) et la hauteur (5 lignes).
-  const tw = Math.min(pitch.width * 0.17, pitch.height * 0.165);
+  const tw = Math.min(pitch.width * 0.19, pitch.height * 0.185);
   const tokenW = tw * 1.3;
-  const tokenH = tw * 1.12;
-  const inner = { left: pitch.left + tokenW / 2, top: pitch.top + tokenH * 0.42, width: pitch.width - tokenW, height: pitch.height - tokenH * 0.98 };
+  const tokenH = tw * 1.3;
+  const inner = { left: pitch.left + tokenW / 2, top: pitch.top + tokenH * 0.42, width: pitch.width - tokenW, height: pitch.height - tokenH * 0.96 };
   const captain = starters.find((p) => p.captain);
 
   return (
@@ -104,31 +109,46 @@ function Poster({ starters, bench, system, match, format, title, draft }: {
 
 function Token({ p, tw, cx, cy }: { p: LineupPosterPlayer; tw: number; cx: number; cy: number }) {
   const w = tw * 1.3;
-  const photo = tw * 0.66;
+  const cut = useCutout(p.photo);
+  // Photo sans cadre : bords fondus dans le terrain (effet « détouré »).
+  const photo = tw * 0.8;
+  const photoH = photo * 1.02;
   const last = p.lastName.toUpperCase();
   const nameSize = Math.min(tw * 0.2, (w * 1.75) / Math.max(6, last.length));
   const initials = `${p.firstName.charAt(0)}${p.lastName.charAt(0)}`.toUpperCase();
   return (
     <div style={{ position: "absolute", left: cx - w / 2, top: cy - tw * 0.42, width: w, display: "flex", flexDirection: "column", alignItems: "center" }}>
-      <div style={{ position: "relative", width: w, height: photo + tw * 0.06, display: "flex", justifyContent: "center" }}>
+      <div style={{ position: "relative", width: w, height: photoH, display: "flex", justifyContent: "center" }}>
         {p.shirt != null ? (
-          <span style={{ ...SHIRT_STYLE, position: "absolute", right: w / 2 + photo * 0.26, top: tw * 0.06 + photo * 0.5 - tw * 0.34, fontSize: tw * 0.62, letterSpacing: "-0.02em", zIndex: 2, color: "#fff", textShadow: "0 3px 10px rgba(7,22,46,0.95)" }}>{p.shirt}</span>
+          <span style={{ ...SHIRT_STYLE, position: "absolute", right: w / 2 + photo * 0.2, top: photoH * 0.5 - tw * 0.36, fontSize: tw * 0.66, letterSpacing: "-0.02em", zIndex: 2, color: "#fff", textShadow: "0 3px 10px rgba(7,22,46,0.95)" }}>{p.shirt}</span>
         ) : null}
-        <div style={{ position: "relative", marginTop: tw * 0.06, width: photo, height: photo, borderRadius: "50%", overflow: "hidden", border: "4px solid #fff", background: `linear-gradient(165deg, #0b4fb8, ${NIGHT})`, boxShadow: "0 6px 16px rgba(0,0,0,0.45)" }}>
+        <div style={{ position: "relative", width: photo, height: photoH, overflow: "hidden", WebkitMaskImage: cut ? FADE_BOTTOM : FADE, maskImage: cut ? FADE_BOTTOM : FADE }}>
           {p.photo ? (
-            <img src={p.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 18%" }} />
+            <img src={cut ?? p.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 18%", filter: cut ? "drop-shadow(0 6px 10px rgba(0,0,0,0.45))" : undefined }} />
           ) : (
-            <span style={{ display: "flex", width: "100%", height: "100%", alignItems: "center", justifyContent: "center", fontFamily: DISPLAY, fontWeight: 800, fontSize: photo * 0.42, color: "rgba(255,255,255,0.5)" }}>{initials}</span>
+            <span style={{ display: "flex", width: photo * 0.78, height: photo * 0.78, margin: `${photo * 0.1}px auto 0`, borderRadius: "50%", alignItems: "center", justifyContent: "center", fontFamily: DISPLAY, fontWeight: 800, fontSize: photo * 0.34, color: "rgba(255,255,255,0.6)", background: `linear-gradient(165deg, #0b4fb8, ${NIGHT})` }}>{initials}</span>
           )}
         </div>
         {p.captain ? (
-          <span style={{ position: "absolute", top: tw * 0.02, left: w / 2 + photo * 0.24, width: tw * 0.24, height: tw * 0.24, borderRadius: "50%", background: "#fff", color: NIGHT, border: `3px solid ${FUCHSIA}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: DISPLAY, fontWeight: 800, fontSize: tw * 0.15 }}>C</span>
+          <span style={{ position: "absolute", top: tw * 0.02, left: w / 2 + photo * 0.18, width: tw * 0.24, height: tw * 0.24, borderRadius: "50%", background: "#fff", color: NIGHT, border: `3px solid ${FUCHSIA}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: DISPLAY, fontWeight: 800, fontSize: tw * 0.15 }}>C</span>
         ) : null}
       </div>
-      <span style={{ marginTop: tw * 0.04, fontFamily: DISPLAY, fontWeight: 800, fontSize: nameSize, lineHeight: 1.05, letterSpacing: "0.03em", whiteSpace: "nowrap", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{last}</span>
+      <span style={{ marginTop: -tw * 0.02, fontFamily: DISPLAY, fontWeight: 800, fontSize: nameSize, lineHeight: 1.05, letterSpacing: "0.03em", whiteSpace: "nowrap", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{last}</span>
       <span style={{ marginTop: 3, width: "62%", height: 4, borderRadius: 2, background: FUCHSIA }} />
     </div>
   );
+}
+
+/** Photo détourée dans le navigateur (fond uni retiré) ; null tant qu'elle n'est pas prête ou si le fond est chargé. */
+function useCutout(src: string | null) {
+  const [out, setOut] = useState<{ src: string; url: string | null } | null>(null);
+  useEffect(() => {
+    if (!src) return;
+    let alive = true;
+    cutout(src).then((url) => { if (alive) setOut({ src, url }); }).catch(() => { if (alive) setOut({ src, url: null }); });
+    return () => { alive = false; };
+  }, [src]);
+  return out && out.src === src ? out.url : null;
 }
 
 /** Tracé du terrain (vue de dessus), attaque en haut. */
