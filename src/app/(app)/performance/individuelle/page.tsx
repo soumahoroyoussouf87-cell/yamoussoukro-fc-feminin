@@ -51,7 +51,7 @@ export default async function IndividualPerformancePage({ searchParams }: PagePr
                 </div>
               ))}
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Moyenne des joueuses ayant au moins {min} évaluations validées sur la période. Ce n&apos;est pas l&apos;indice collectif (IPC), qui mesure directement la maîtrise du projet de jeu (livraison 3).</p>
+            <p className="mt-2 text-xs text-muted-foreground">Moyenne des joueuses ayant au moins {min} évaluations validées sur la période. Ce n&apos;est pas l&apos;indice collectif (IPC), qui mesure directement la maîtrise du projet de jeu (voir Performance collective).</p>
           </section>
 
           {evaluatedCount === 0 ? (

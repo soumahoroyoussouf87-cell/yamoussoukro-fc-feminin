@@ -35,5 +35,10 @@ Tests unitaires : `tests/unit/training-sheets.test.ts` ; sécurité base : bloc 
 - `tests/local/phase3-tests.test.ts` : 12 protocoles, versionnage, copie du protocole, indice, validation, verrouillage, RLS.
 - `tests/e2e/recette-tests.cjs` : 11 étapes (protocole, saisie adjoint, validation, progression, IDI, droits, mobile 390 px).
 
+## Phase 3 · livraison 3 (27/11/2026)
+- `tests/unit/collective-engine.test.ts` : IPC pondéré, N/E exclu, IMP, IPS, IPR, compacité, IDC/IDS.
+- `tests/local/phase3-game-model.test.ts` : projet initial (41 principes, 100 %), figement, clone et publication contrôlée, systèmes, validation, verrouillage, copie de l'objectif de compacité, RLS.
+- `tests/e2e/recette-collective.cjs` : 12 étapes (brouillon, systèmes au clavier, saisie adjoint, validation, seuil, IPC, tableau de bord, Match Center, droits, mobile 390 px).
+
 ## À ajouter dans les phases suivantes
 Calcul des indices (N/E, seuils, sources), confidentialité du onze provisoire, accès clip vs vidéo source, confidentialité médicale, exports PDF/PNG, restauration de sauvegarde.

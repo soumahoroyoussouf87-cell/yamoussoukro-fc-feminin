@@ -5,6 +5,7 @@ export function PerfNav() {
     <SubNav
       items={[
         { href: "/performance/individuelle", label: "Performance individuelle" },
+        { href: "/performance/collective", label: "Collective" },
         { href: "/performance/evaluations", label: "Évaluations" },
         { href: "/performance/tests", label: "Tests techniques" },
         { href: "/performance/referentiels", label: "Référentiels" },

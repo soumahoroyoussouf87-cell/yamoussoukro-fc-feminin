@@ -72,3 +72,9 @@ Toutes les valeurs proviennent des données saisies. « Non évalué » signifie
 3. Saisissez les réussites (les tentatives prévues sont reprises) ou les temps, et les erreurs. L'indice s'affiche et tout s'enregistre seul.
 4. Soumettez ; l'entraîneur principal valide. Les résultats entrent alors dans la note technique (20 %) et dans l'IDI.
 5. **Protocoles** : adaptez les conditions et fixez le barème des tests chronométrés (temps de référence = 100, temps limite = 0). Chaque changement crée une nouvelle version ; seules les mesures d'une même version sont comparées.
+
+## Projet de jeu et performance collective (Phase 3, 27/11/2026)
+- **Tactique › Projet de jeu** : les 5 moments, leurs pondérations et les principes. Pour le faire évoluer, « Créer le brouillon », modifiez, puis « Publier cette version » (le total doit faire 100 %).
+- **Tactique › Systèmes de jeu** : créez le système du club, déplacez les joueuses sur le terrain, ajoutez les animations (possession, hors possession, transitions).
+- **Performance › Collective › Évaluer le collectif** (ou depuis le Match Center) : notez les principes observés, les secteurs, les relations entre lignes et les distances. N/E ne pénalise pas. Soumettez ; l'entraîneur principal valide.
+- Les indices IPC, IMP, IPS et IPR apparaissent à partir du seuil d'évaluations validées réglé dans les paramètres.

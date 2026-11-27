@@ -78,10 +78,10 @@ export const NAVIGATION: NavSection[] = [
   {
     title: "Tactique",
     items: [
-      { label: "Projet de jeu", icon: Shield, phase: 3 },
-      { label: "Systèmes de jeu", icon: Network, phase: 3 },
+      { label: "Projet de jeu", icon: Shield, href: "/projet-de-jeu", phase: 3, permission: "evaluations.read" },
+      { label: "Systèmes de jeu", icon: Network, href: "/projet-de-jeu/systemes", phase: 3, permission: "evaluations.read" },
       { label: "Tableau tactique", icon: Map, phase: 3 },
-      { label: "Principes et sous-principes", icon: ScrollText, phase: 3 },
+      { label: "Principes et sous-principes", icon: ScrollText, href: "/projet-de-jeu", phase: 3, permission: "evaluations.read" },
       { label: "Analyse des adversaires", icon: Swords, phase: 3 },
       { label: "Coups de pied arrêtés", icon: Flag, phase: 3 },
     ],
@@ -91,9 +91,9 @@ export const NAVIGATION: NavSection[] = [
     items: [
       { label: "Performance individuelle", icon: Gauge, href: "/performance/individuelle", phase: 3, permission: "evaluations.read" },
       { label: "Évaluations", icon: ClipboardCheck, href: "/performance/evaluations", phase: 3, permission: "evaluations.read" },
-      { label: "Performance sectorielle", icon: Gauge, phase: 3 },
-      { label: "Performance intersectorielle", icon: Network, phase: 3 },
-      { label: "Performance collective", icon: Users, phase: 3 },
+      { label: "Performance sectorielle", icon: Gauge, href: "/performance/collective#secteurs", phase: 3, permission: "evaluations.read" },
+      { label: "Performance intersectorielle", icon: Network, href: "/performance/collective#relations", phase: 3, permission: "evaluations.read" },
+      { label: "Performance collective", icon: Users, href: "/performance/collective", phase: 3, permission: "evaluations.read" },
       { label: "Tests techniques", icon: Timer, href: "/performance/tests", phase: 3, permission: "evaluations.read" },
       { label: "Référentiels d'évaluation", icon: ScrollText, href: "/performance/referentiels", phase: 3, permission: "evaluations.read" },
     ],

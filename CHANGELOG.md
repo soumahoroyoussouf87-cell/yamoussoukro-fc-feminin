@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [0.6.0] — 2026-11-27 — Phase 3 · livraison 3 : projet de jeu et performance collective
+
+### Ajouté
+- Projet de jeu versionné (migration 012) : 5 moments du jeu pondérés (25/30/15/20/10), 41 principes du cahier des charges (§9) avec description, comportements attendus, critères d'évaluation, sous-principes et exercices liés. Une version publiée est figée ; une nouvelle version se crée par copie et ne se publie que si les moments totalisent 100 % et ont chacun un principe.
+- Systèmes de jeu et animations : système de référence du club, animations en possession, hors possession et en transition, placement des joueuses à la souris, au doigt ou au clavier.
+- Évaluations collectives (match ou entraînement) : principes du projet de jeu, 7 secteurs × 5 critères, 8 relations × 4 critères, notes 1 à 5 ou N/E, fait observé et interprétation séparés, distances entre les lignes comparées aux objectifs de compacité (objectif copié dans la mesure), circuit de validation, verrouillage, notification.
+- Indices collectifs calculés uniquement sur les évaluations collectives validées : IPC, IMP (maîtrise du projet), IPS (secteurs), IPR (relations), IDC et IDS (progression comparable). Page « Performance collective », tuile IPC du tableau de bord, accès depuis le Match Center.
+
 ## [0.5.0] — 2026-11-27 — Phase 3 · livraison 2 : tests techniques et IDI
 
 ### Ajouté

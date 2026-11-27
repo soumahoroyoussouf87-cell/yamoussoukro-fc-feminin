@@ -16,6 +16,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ClubLogo } from "@/components/shell/club-logo";
 import { formatDate, formatDateTime } from "@/lib/utils";
 import { squadIndices } from "@/lib/performance/data";
+import { teamIndices } from "@/lib/performance/collective-data";
+import { levelOf } from "@/lib/performance/engine";
 import { DIMENSIONS, fmtDelta, FRAMEWORK_KEY_LABELS, teamDimensionIndices } from "@/lib/performance/engine";
 import { Radar } from "@/components/performance/charts";
 
@@ -33,9 +35,7 @@ function Kpi({ label, value, hint, tone }: { label: string; value: string | numb
 }
 
 const UPCOMING = [
-  { title: "Système de jeu de référence", phase: 3, icon: Shield, text: "Projet de jeu et systèmes." },
   { title: "Joueuse en focus · radar", phase: 3, icon: Target, text: "Évaluations validées." },
-  { title: "Progression collective", phase: 3, icon: FileBarChart, text: "Courbe de l'IPC." },
   { title: "Dernières séquences vidéo", phase: 4, icon: Clapperboard, text: "Video Analysis Center." },
   { title: "Objectifs de développement", phase: 4, icon: Goal, text: "Plans de développement." },
 ];
@@ -53,6 +53,7 @@ export default async function DashboardPage() {
   const perf = can(ctx, "evaluations.read") && club.season
     ? await squadIndices(ctx, { from: club.season.starts_on, to: club.season.ends_on })
     : null;
+  const coll = perf && club.season ? await teamIndices(ctx, { from: club.season.starts_on, to: club.season.ends_on }) : null;
   const team = perf ? teamDimensionIndices(perf.rows.map((x) => x.indices), perf.min) : null;
   const focus = perf?.rows.filter((x) => x.indices.observations > 0).sort((a, b) => (b.indices.to ?? "").localeCompare(a.indices.to ?? ""))[0] ?? null;
   const upcoming = focus ? UPCOMING.filter((u) => !u.title.startsWith("Joueuse en focus")) : UPCOMING;
@@ -64,7 +65,10 @@ export default async function DashboardPage() {
       value: team?.dims[dim.code].index ?? null,
       hint: team?.dims[dim.code].index != null ? `${team.dims[dim.code].players} joueuse(s) · saison` : "Aucune évaluation validée au-dessus du seuil",
     })),
-    { label: "Collectif (IPC)", value: null, hint: "Évaluation collective : livraison 3 de la Phase 3" },
+    {
+      label: "Collectif (IPC)", value: coll?.team?.ipc ?? null,
+      hint: !coll?.reference ? "Publiez le projet de jeu" : coll.team?.ipc != null ? `${levelOf(coll.team.ipc)} · ${coll.team.observations} évaluation(s) collective(s)` : `Données insuffisantes (${coll.team?.observations ?? 0}/${coll.min} évaluations collectives)`,
+    },
     {
       label: "Progression générale (IDI)", value: idi, text: idi == null ? undefined : fmtDelta(idi),
       hint: idi == null ? "Il faut deux mesures comparables par joueuse" : `Moyenne de ${idis.length} joueuse(s) · saison`,
@@ -79,6 +83,7 @@ export default async function DashboardPage() {
     { label: "Créer une convocation", icon: FileBarChart, href: can(ctx, "matches.write") ? "/competition/convocations" : undefined, phase: 1 },
     { label: "Composer le onze", icon: Shirt, href: can(ctx, "lineups.write") ? "/competition/onze-de-depart" : undefined, phase: 1 },
     { label: "Évaluer une joueuse", icon: Target, href: can(ctx, "evaluations.write") ? "/performance/evaluations/nouvelle" : undefined, phase: 3 },
+    { label: "Évaluer le collectif", icon: Shield, href: can(ctx, "evaluations.write") ? "/performance/collective/nouvelle" : undefined, phase: 3 },
     { label: "Importer une vidéo", icon: Video, phase: 4 },
     { label: "Créer un objectif", icon: Goal, phase: 4 },
     { label: "Générer un rapport", icon: FileBarChart, phase: 3 },
