@@ -73,5 +73,11 @@ Fonctions : `app.set_updated_by()`, `app.guard_same_club()` (phase, schéma et t
 - RPC `clone_framework_version`, `publish_framework_version` (contrôle 100 % par poste). Référentiel initial créé par `app.seed_performance_framework` pour chaque club.
 - RLS : lecture `evaluations.read` ; référentiels `frameworks.manage` ; saisie `evaluations.write` ; contenu d'une évaluation validée modifiable seulement avec `evaluations.validate`.
 
+## Tests techniques (migration 011)
+- `technical_test_protocols` : protocole par club (code, conditions, mesure réussite/temps, tentatives, barème `ref_best`/`ref_limit`, `criterion_codes`, `version_no`, `active`). Pas de suppression ; changement des conditions ou du barème = version + 1 (trigger).
+- `technical_test_sessions` : date, lieu, conditions, `protocol_ids`, `player_ids`, statut du circuit de validation (`evaluations.validate`).
+- `technical_test_results` : tentatives, réussites, erreurs, temps, observation ; copie du protocole (version, mesure, barème, critères) et `index_value` calculés par la base. Verrouillés après validation.
+- RLS : lecture `evaluations.read` ; protocoles `frameworks.manage` ; séances et résultats `evaluations.write` (validation `evaluations.validate`).
+
 ## Tables prévues (phases 3 à 6)
 Conformément au §45 du cahier des charges : planification, compétition complète (`match_squads`, `lineups` avec statut de workflow et historique, `match_events`, `delegations`…), tactique (`game_models`, `game_model_versions`…), performance (`evaluation_frameworks`, `framework_versions`, `position_criteria_weights`, `evaluation_scores`, `evaluation_evidence`, `performance_snapshots`…), vidéo (`videos`, `video_clips`, `clip_players`, `video_access_grants`…), développement, sport science, schéma `medical` séparé, `approval_workflows` / `approval_history`, `ai_reports` / `ai_report_sources`.

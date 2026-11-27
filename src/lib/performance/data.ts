@@ -5,7 +5,7 @@ import type { AccessContext } from "@/lib/auth";
 import { getScope, listPlayerOptions, type PlayerOption } from "@/lib/phase2/data";
 import {
   aggregatePlayer, DIMENSION_CODES, POSITION_FRAMEWORK_KEY, type Context, type DimensionCode, type FrameworkKey,
-  type Observation, type PlayerIndices, type VersionModel,
+  developmentIndex, type Measure, type Observation, type PlayerIndices, type TestPoint, type TestSession, type VersionModel,
 } from "./engine";
 
 export type DimensionMeta = { id: string; code: DimensionCode; label: string; description: string | null; sortOrder: number };
@@ -139,7 +139,7 @@ export async function loadObservations(ctx: AccessContext, opts: { playerId?: st
   return { rows, versions };
 }
 
-export type SquadRow = { player: PlayerOption; indices: PlayerIndices };
+export type SquadRow = { player: PlayerOption; indices: PlayerIndices; idi: number | null; idiComparisons: number };
 
 /** Indices de toutes les joueuses actives sur une période. */
 export async function squadIndices(ctx: AccessContext, period: { from: string | null; to: string | null }) {
@@ -149,7 +149,13 @@ export async function squadIndices(ctx: AccessContext, period: { from: string | 
   if (!reference) return { rows: [] as SquadRow[], reference: null, min };
   const byPlayer = new Map<string, Observation[]>();
   for (const r of rows) (byPlayer.get(r.playerId) ?? byPlayer.set(r.playerId, []).get(r.playerId)!).push(r);
-  const out: SquadRow[] = players.map((p) => ({ player: p, indices: aggregatePlayer(byPlayer.get(p.id) ?? [], versions, reference, min) }));
+  const tests = await loadTestResults(ctx, period);
+  const out: SquadRow[] = players.map((p) => {
+    const t = tests.byPlayer.get(p.id);
+    const indices = aggregatePlayer(byPlayer.get(p.id) ?? [], versions, reference, min, { tests: t?.sessions, fallbackKey: defaultKey(p.position) });
+    const dev = developmentIndex({ tests: t?.points ?? [], timeline: indices.timeline });
+    return { player: p, indices, idi: dev.idi, idiComparisons: dev.comparisons.length };
+  });
   return { rows: out, reference, min };
 }
 
@@ -189,3 +195,78 @@ export async function loadEvaluationSession(ctx: AccessContext, id: string) {
   return { session: s, version: version!, evaluations: evals ?? [] };
 }
 export type EvaluationSessionFull = NonNullable<Awaited<ReturnType<typeof loadEvaluationSession>>>;
+
+// ----------------------------------------------------------------- Tests techniques
+
+export type Protocol = {
+  id: string; code: string; name: string; objective: string | null; setup: string; measure: Measure; attempts: number;
+  ref_best: number | null; ref_limit: number | null; criterion_codes: string[]; version_no: number; active: boolean; sort_order: number;
+};
+
+export async function listProtocols(ctx: AccessContext, opts: { activeOnly?: boolean } = {}): Promise<Protocol[]> {
+  const supabase = await createClient();
+  let q = supabase.from("technical_test_protocols")
+    .select("id, code, name, objective, setup, measure, attempts, ref_best, ref_limit, criterion_codes, version_no, active, sort_order")
+    .eq("club_id", ctx.clubId).order("sort_order");
+  if (opts.activeOnly) q = q.eq("active", true);
+  const { data } = await q;
+  return (data ?? []).map((p) => ({ ...p, measure: p.measure as Measure, ref_best: p.ref_best == null ? null : Number(p.ref_best), ref_limit: p.ref_limit == null ? null : Number(p.ref_limit) }));
+}
+
+export type TestRow = {
+  id: string; sessionId: string; sessionTitle: string; date: string; playerId: string; protocolId: string; protocolName: string;
+  protocolVersion: number; measure: Measure; attempts: number | null; successes: number | null; errors: number | null;
+  valueSeconds: number | null; index: number | null; criterionCodes: string[]; notes: string | null;
+};
+
+/** Résultats des séances de tests validées, regroupés par joueuse (séances pour l'indice, points pour l'IDI). */
+export async function loadTestResults(ctx: AccessContext, opts: { playerId?: string; from?: string | null; to?: string | null } = {}) {
+  const supabase = await createClient();
+  let q = supabase
+    .from("technical_test_results")
+    .select("id, player_id, protocol_id, protocol_version, measure, attempts, successes, errors, value_seconds, index_value, criterion_codes, notes, technical_test_protocols(name), technical_test_sessions!inner(id, title, tested_on, status)")
+    .eq("club_id", ctx.clubId)
+    .in("technical_test_sessions.status", [...VALIDATED]);
+  if (opts.playerId) q = q.eq("player_id", opts.playerId);
+  if (opts.from) q = q.gte("technical_test_sessions.tested_on", opts.from);
+  if (opts.to) q = q.lte("technical_test_sessions.tested_on", opts.to);
+  const { data } = await q;
+  const rows: TestRow[] = (data ?? []).map((r) => {
+    const s = r.technical_test_sessions as unknown as { id: string; title: string; tested_on: string };
+    return {
+      id: r.id, sessionId: s.id, sessionTitle: s.title, date: s.tested_on, playerId: r.player_id, protocolId: r.protocol_id,
+      protocolName: (r.technical_test_protocols as { name: string } | null)?.name ?? "Protocole", protocolVersion: r.protocol_version,
+      measure: r.measure as Measure, attempts: r.attempts, successes: r.successes, errors: r.errors,
+      valueSeconds: r.value_seconds == null ? null : Number(r.value_seconds), index: r.index_value == null ? null : Number(r.index_value),
+      criterionCodes: r.criterion_codes, notes: r.notes,
+    };
+  });
+  const byPlayer = new Map<string, { sessions: TestSession[]; points: TestPoint[]; rows: TestRow[] }>();
+  for (const r of rows.sort((a, b) => a.date.localeCompare(b.date))) {
+    const e = byPlayer.get(r.playerId) ?? byPlayer.set(r.playerId, { sessions: [], points: [], rows: [] }).get(r.playerId)!;
+    e.rows.push(r);
+    let sess = e.sessions.find((x) => x.id === r.sessionId);
+    if (!sess) e.sessions.push((sess = { id: r.sessionId, date: r.date, results: [] }));
+    sess.results.push({ criterionCodes: r.criterionCodes, index: r.index });
+    e.points.push({
+      protocolId: r.protocolId, protocolName: r.protocolName, protocolVersion: r.protocolVersion, measure: r.measure, date: r.date, index: r.index,
+      raw: r.measure === "temps" ? r.valueSeconds : r.attempts ? Math.round(((r.successes ?? 0) * 1000) / r.attempts) / 10 : null,
+    });
+  }
+  return { rows, byPlayer };
+}
+
+/** Séance de tests et ses résultats. */
+export async function loadTestSession(id: string) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return null;
+  const supabase = await createClient();
+  const { data: s } = await supabase
+    .from("technical_test_sessions")
+    .select("id, title, tested_on, location, conditions, notes, status, protocol_ids, player_ids, training_session_id, created_by, validated_by, validated_at, training_sessions(id, number, theme)")
+    .eq("id", id).maybeSingle();
+  if (!s) return null;
+  const { data: results } = await supabase.from("technical_test_results")
+    .select("id, protocol_id, player_id, attempts, successes, errors, value_seconds, notes, index_value, protocol_version, measure, updated_at")
+    .eq("test_session_id", id);
+  return { session: s, results: results ?? [] };
+}

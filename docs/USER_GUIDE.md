@@ -65,3 +65,10 @@ Toutes les valeurs proviennent des données saisies. « Non évalué » signifie
 4. Soumettez puis faites **Valider** (entraîneur principal ou direction sportive). Seules les évaluations validées comptent dans les indices ; une évaluation validée est verrouillée.
 5. **Performance individuelle** : IPI et indices par dimension de chaque joueuse. L'IPI s'affiche à partir de 3 évaluations validées (seuil réglable dans Référentiels).
 6. **Référentiels** : pour changer un critère ou un poids, créez une nouvelle version (copie), modifiez-la puis publiez-la. Les évaluations passées gardent leur version.
+
+## Tests techniques (Phase 3, 27/11/2026)
+1. Menu **Tests techniques** › **Nouvelle séance de tests** : cochez les protocoles, notez les conditions (surface, météo, ballon).
+2. Cochez les joueuses testées puis **Mettre à jour la grille**.
+3. Saisissez les réussites (les tentatives prévues sont reprises) ou les temps, et les erreurs. L'indice s'affiche et tout s'enregistre seul.
+4. Soumettez ; l'entraîneur principal valide. Les résultats entrent alors dans la note technique (20 %) et dans l'IDI.
+5. **Protocoles** : adaptez les conditions et fixez le barème des tests chronométrés (temps de référence = 100, temps limite = 0). Chaque changement crée une nouvelle version ; seules les mesures d'une même version sont comparées.

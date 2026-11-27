@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [0.5.0] — 2026-11-27 — Phase 3 · livraison 2 : tests techniques et IDI
+
+### Ajouté
+- Tests techniques standardisés (migration 011) : les 12 protocoles du cahier des charges (§21) avec conditions types modifiables, nombre de tentatives, critères techniques alimentés, barème des tests chronométrés. Toute modification des conditions ou du barème crée une nouvelle version du protocole.
+- Séances de tests : protocoles et joueuses choisis (présentes à la séance proposées), conditions de réalisation, grille de saisie (tentatives, réussites, erreurs, temps, observation) avec indice en direct et sauvegarde automatique, circuit de validation, verrouillage et notification. Chaque résultat garde une copie du protocole utilisé.
+- La source « Tests » (20 %) entre dans la note technique, pondérée par les critères du poste ; critères non mesurés ou non applicables ignorés.
+- IDI (indice de développement individuel) : compare uniquement des mesures comparables (même protocole et même version ; même référentiel, même poste, même contexte pour les évaluations), en points et en %. Profil 360° : tableau des tests, évolution, carte « Développement ». Tableau de bord : « Progression générale (IDI) ».
+
 ## [0.4.0] — 2026-11-27 — Phase 3 · livraison 1 : référentiels et évaluation individuelle
 
 ### Ajouté

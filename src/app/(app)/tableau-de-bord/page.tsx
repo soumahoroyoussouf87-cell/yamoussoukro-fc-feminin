@@ -16,7 +16,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ClubLogo } from "@/components/shell/club-logo";
 import { formatDate, formatDateTime } from "@/lib/utils";
 import { squadIndices } from "@/lib/performance/data";
-import { DIMENSIONS, FRAMEWORK_KEY_LABELS, teamDimensionIndices } from "@/lib/performance/engine";
+import { DIMENSIONS, fmtDelta, FRAMEWORK_KEY_LABELS, teamDimensionIndices } from "@/lib/performance/engine";
 import { Radar } from "@/components/performance/charts";
 
 export const metadata = { title: "Tableau de bord" };
@@ -56,14 +56,19 @@ export default async function DashboardPage() {
   const team = perf ? teamDimensionIndices(perf.rows.map((x) => x.indices), perf.min) : null;
   const focus = perf?.rows.filter((x) => x.indices.observations > 0).sort((a, b) => (b.indices.to ?? "").localeCompare(a.indices.to ?? ""))[0] ?? null;
   const upcoming = focus ? UPCOMING.filter((u) => !u.title.startsWith("Joueuse en focus")) : UPCOMING;
-  const indexTiles: { label: string; value: number | null; hint: string }[] = [
+  const idis = (perf?.rows ?? []).map((x) => x.idi).filter((v): v is number => v != null);
+  const idi = idis.length ? Math.round((idis.reduce((a, b) => a + b, 0) / idis.length) * 10) / 10 : null;
+  const indexTiles: { label: string; value: number | null; hint: string; text?: string }[] = [
     ...DIMENSIONS.map((dim) => ({
       label: dim.label,
       value: team?.dims[dim.code].index ?? null,
       hint: team?.dims[dim.code].index != null ? `${team.dims[dim.code].players} joueuse(s) · saison` : "Aucune évaluation validée au-dessus du seuil",
     })),
     { label: "Collectif (IPC)", value: null, hint: "Évaluation collective : livraison 3 de la Phase 3" },
-    { label: "Progression générale", value: null, hint: "Indices de développement : livraison 2 de la Phase 3" },
+    {
+      label: "Progression générale (IDI)", value: idi, text: idi == null ? undefined : fmtDelta(idi),
+      hint: idi == null ? "Il faut deux mesures comparables par joueuse" : `Moyenne de ${idis.length} joueuse(s) · saison`,
+    },
   ];
 
   const quick = [
@@ -140,7 +145,7 @@ export default async function DashboardPage() {
               <p className="hyphens-auto text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{t.label}</p>
               {t.value == null
                 ? <p className="mt-1 font-display text-lg font-semibold text-muted-foreground">Non évalué</p>
-                : <p className="mt-1 font-display text-3xl font-bold tabular-nums">{fmtIdx(t.value)}</p>}
+                : <p className="mt-1 font-display text-3xl font-bold tabular-nums">{t.text ?? fmtIdx(t.value)}</p>}
               <p className="mt-0.5 text-[10px] text-muted-foreground">{t.hint}</p>
             </div>
           ))}

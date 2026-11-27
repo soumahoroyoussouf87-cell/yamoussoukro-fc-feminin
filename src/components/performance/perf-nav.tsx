@@ -6,6 +6,7 @@ export function PerfNav() {
       items={[
         { href: "/performance/individuelle", label: "Performance individuelle" },
         { href: "/performance/evaluations", label: "Évaluations" },
+        { href: "/performance/tests", label: "Tests techniques" },
         { href: "/performance/referentiels", label: "Référentiels" },
       ]}
     />

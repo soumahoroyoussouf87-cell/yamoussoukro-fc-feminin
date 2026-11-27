@@ -4,7 +4,7 @@
 |---|---|---|
 | 1 — Foundation | **Livrée le 26/11/2026** (en attente de validation du club) | Architecture, design system, auth, BDD, RLS, tableau de bord, effectif, staff, administration |
 | 2 — Sport management | **Livrée le 26/11/2026** (en attente de validation du club) | Calendrier, macro/méso/microcycles, programme hebdomadaire J-6…J+1, fiches de séance, bibliothèque d'exercices, présences, Match Center, convocations, délégations, onze de départ, résultats, classement, statistiques |
-| 3 — Performance framework | **En cours** : livraison 1 (référentiels, évaluation individuelle, IPI) prête le 27/11/2026 | Projet de jeu versionné, systèmes, référentiels, tests techniques, évaluations (individuelle, sectorielle, intersectorielle, collective), indices |
+| 3 — Performance framework | **En cours** : livraison 1 (référentiels, évaluation individuelle, IPI) en ligne le 27/11/2026 ; livraison 2 (tests techniques, IDI) prête le 27/11/2026 | Projet de jeu versionné, systèmes, référentiels, tests techniques, évaluations (individuelle, sectorielle, intersectorielle, collective), indices |
 | 4 — Video & development | — | Vidéothèque, import, lecteur pro, codification, playlists, annotations, comparaison, PDI |
 | 5 — Sport science | — | Tests physiques, GPS (CSV), charges, médical, portail joueuse |
 | 6 — Intelligence | — | YFC PERFORMANCE AI, rapports intelligents, recommandations |

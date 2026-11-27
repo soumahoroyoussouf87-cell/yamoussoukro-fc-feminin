@@ -4,9 +4,9 @@ import { Gauge, Plus } from "lucide-react";
 import { can, requirePermission } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { signPhotos } from "@/lib/data/players";
-import { getMinObservations, getPublishedVersion, loadObservations, periods as listPeriods, profileNames } from "@/lib/performance/data";
+import { getMinObservations, getPublishedVersion, loadObservations, loadTestResults, periods as listPeriods, profileNames } from "@/lib/performance/data";
 import {
-  aggregatePlayer, applicableCriteria, CONTEXT_LABELS, DIMENSIONS, FRAMEWORK_KEY_LABELS, levelOf, POSITION_FRAMEWORK_KEY,
+  aggregatePlayer, applicableCriteria, CONTEXT_LABELS, developmentIndex, DIMENSIONS, fmtDelta, FRAMEWORK_KEY_LABELS, levelOf, POSITION_FRAMEWORK_KEY,
 } from "@/lib/performance/engine";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -34,13 +34,18 @@ export default async function PlayerPerformancePage({ params, searchParams }: Pa
   const today = new Date().toISOString().slice(0, 10);
   const all = await listPeriods(ctx, today);
   const period = pickPeriod(all, sp.periode);
-  const [reference, min, { rows, versions }, photos] = await Promise.all([
+  const [reference, min, { rows, versions }, photos, tests] = await Promise.all([
     getPublishedVersion(ctx), getMinObservations(ctx), loadObservations(ctx, { playerId: id, from: period.from, to: period.to }),
-    signPhotos("player-photos", [player.photo_path]),
+    signPhotos("player-photos", [player.photo_path]), loadTestResults(ctx, { playerId: id, from: period.from, to: period.to }),
   ]);
   const primary = (player.player_positions as { is_primary: boolean; positions: { code: string; label: string } | null }[]).find((p) => p.is_primary)?.positions;
   const names = await profileNames(rows.map((r) => r.evaluatorId));
-  const x = reference ? aggregatePlayer(rows, versions, reference, min) : null;
+  const mine = tests.byPlayer.get(id);
+  const primaryKey = primary ? POSITION_FRAMEWORK_KEY[primary.code] ?? null : null;
+  const x = reference ? aggregatePlayer(rows, versions, reference, min, { tests: mine?.sessions, fallbackKey: primaryKey }) : null;
+  const dev = x ? developmentIndex({ tests: mine?.points ?? [], timeline: x.timeline, versionNo: (v) => versions.get(v)?.versionNo }) : null;
+  const testRows = mine?.rows ?? [];
+  const protocolsSeen = [...new Map(testRows.map((r) => [r.protocolId, r.protocolName])).entries()];
   const fk = x?.frameworkKey ?? (primary ? POSITION_FRAMEWORK_KEY[primary.code] : null) ?? null;
   const byId = new Map(rows.map((r) => [r.id, r]));
   const name = `${player.first_name} ${player.last_name}`;
@@ -60,11 +65,11 @@ export default async function PlayerPerformancePage({ params, searchParams }: Pa
 
       {!x || !reference ? (
         <EmptyState icon={Gauge} title="Aucun référentiel publié" description="Publiez un référentiel pour calculer les indices." />
-      ) : x.observations === 0 ? (
-        <EmptyState icon={Gauge} title="Aucune évaluation validée sur la période" description="Le profil se construit à partir des évaluations validées (match et entraînement)." />
+      ) : x.observations === 0 && x.testSessions === 0 ? (
+        <EmptyState icon={Gauge} title="Aucune évaluation validée sur la période" description="Le profil se construit à partir des évaluations validées (match et entraînement) et des séances de tests validées." />
       ) : (
         <div className="space-y-5">
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
             <div className="flex items-center gap-3 rounded-xl border bg-card p-4">
               <PlayerAvatar src={player.photo_path ? photos.get(player.photo_path) : null} first={player.first_name} last={player.last_name} size={52} />
               <div>
@@ -86,7 +91,12 @@ export default async function PlayerPerformancePage({ params, searchParams }: Pa
             <div className="rounded-xl border bg-card p-4">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Fiabilité</p>
               <div className="mt-2"><ReliabilityBadge value={x.reliability} /></div>
-              <p className="mt-1 text-[11px] text-muted-foreground">Référentiel v{reference.versionNo}</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">Référentiel v{reference.versionNo}{x.testSessions ? ` · ${x.testSessions} séance(s) de tests` : ""}</p>
+            </div>
+            <div className="rounded-xl border bg-card p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">IDI · développement</p>
+              <p className="font-display text-3xl font-bold tabular-nums">{dev?.idi == null ? <span className="text-sm text-muted-foreground">Pas encore comparable</span> : fmtDelta(dev.idi)}</p>
+              <p className="text-[11px] text-muted-foreground">{dev?.idi == null ? "Il faut deux mesures dans les mêmes conditions" : `${dev.relative == null ? "" : `${fmtDelta(dev.relative, "%")} · `}${dev.comparisons.length} comparaison(s)`}</p>
             </div>
           </div>
 
@@ -142,6 +152,54 @@ export default async function PlayerPerformancePage({ params, searchParams }: Pa
               </CardContent>
             </Card>
           ) : null}
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card>
+              <CardHeader><CardTitle className="text-base">Tests techniques</CardTitle><CardDescription>Séances validées sur la période. L&apos;évolution compare la première et la dernière mesure faites avec la même version du protocole.</CardDescription></CardHeader>
+              <CardContent className="overflow-x-auto p-0">
+                {protocolsSeen.length === 0 ? <p className="px-6 pb-6 text-sm text-muted-foreground">Aucun test validé sur la période.</p> : (
+                  <Table>
+                    <THead><TR><TH>Protocole</TH><TH>Dernier résultat</TH><TH className="text-center">Indice</TH><TH className="text-center">Évolution</TH></TR></THead>
+                    <TBody>
+                      {protocolsSeen.map(([pid, pname]) => {
+                        const list = testRows.filter((r) => r.protocolId === pid);
+                        const last = list.at(-1)!;
+                        const cmp = dev?.comparisons.find((c) => c.kind === "test" && c.key === `${pid}|${last.protocolVersion}`);
+                        const raw = dev?.rawOnly.find((c) => c.key === `${pid}|${last.protocolVersion}`);
+                        return (
+                          <TR key={pid}>
+                            <TD><span className="font-medium">{pname}</span><span className="block text-xs text-muted-foreground">{formatDate(last.date)} · {list.length} mesure(s)</span></TD>
+                            <TD className="tabular-nums">{last.measure === "temps" ? (last.valueSeconds == null ? "—" : `${String(last.valueSeconds).replace(".", ",")} s`) : `${last.successes ?? "—"}/${last.attempts ?? "—"}`}{last.errors ? <span className="text-xs text-muted-foreground"> · {last.errors} err.</span> : null}</TD>
+                            <TD className="text-center tabular-nums">{fmtIndex(last.index)}</TD>
+                            <TD className="text-center tabular-nums">{cmp ? <span className={cmp.delta > 0 ? "text-success" : cmp.delta < 0 ? "text-danger" : ""}>{fmtDelta(cmp.delta)}</span> : raw?.rawDelta != null ? <span className={raw.rawDelta < 0 ? "text-success" : raw.rawDelta > 0 ? "text-danger" : ""}>{fmtDelta(raw.rawDelta, "s")}</span> : <span className="text-xs text-muted-foreground">—</span>}</TD>
+                          </TR>
+                        );
+                      })}
+                    </TBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader><CardTitle className="text-base">Développement (IDI)</CardTitle><CardDescription>Progression entre la première et la dernière mesure comparable : même protocole et même version pour les tests ; même référentiel, même poste et même contexte pour les évaluations.</CardDescription></CardHeader>
+              <CardContent>
+                {!dev || dev.comparisons.length === 0 ? <p className="text-sm text-muted-foreground">Pas encore de mesure comparable sur la période.</p> : (
+                  <ul className="divide-y text-sm">
+                    {dev.comparisons.map((c) => (
+                      <li key={`${c.kind}-${c.key}`} className="flex items-start justify-between gap-3 py-2">
+                        <span><span className="font-medium">{c.label}</span><span className="block text-xs text-muted-foreground">{fmtIndex(c.first.value)} le {formatDate(c.first.date)} → {fmtIndex(c.last.value)} le {formatDate(c.last.date)} · {c.n} mesures</span></span>
+                        <span className="whitespace-nowrap text-right tabular-nums">
+                          <strong className={c.delta > 0 ? "text-success" : c.delta < 0 ? "text-danger" : ""}>{fmtDelta(c.delta)}</strong>
+                          <span className="block text-xs text-muted-foreground">{c.relative == null ? "—" : fmtDelta(c.relative, "%")}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <p className="mt-2 text-xs text-muted-foreground">Progression absolue en points d&apos;indice ; progression relative en % de la valeur de départ.</p>
+              </CardContent>
+            </Card>
+          </div>
 
           <Card>
             <CardHeader><CardTitle className="text-base">Historique des évaluations</CardTitle></CardHeader>

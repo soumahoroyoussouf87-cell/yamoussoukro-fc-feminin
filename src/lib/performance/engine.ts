@@ -205,7 +205,9 @@ export type PlayerIndices = {
   applicableCriteria: number;
   reliability: Reliability;
   /** Indice de chaque évaluation, dans l'ordre chronologique (courbe de progression). */
-  timeline: { id: string; date: string; context: Context; ipi: number | null; dims: Record<DimensionCode, number | null> }[];
+  timeline: { id: string; date: string; context: Context; versionId: string; frameworkKey: FrameworkKey; ipi: number | null; dims: Record<DimensionCode, number | null> }[];
+  /** Séances de tests validées prises en compte (source « Tests » de la technique). */
+  testSessions: number;
   /** Moyenne par critère (code) sur la période. */
   criteria: Record<string, { mean: number; n: number }>;
 };
@@ -214,9 +216,12 @@ export type PlayerIndices = {
  * Agrège les évaluations validées d'une joueuse sur une période.
  * `reference` = version publiée actuelle (pondérations des dimensions et couverture).
  */
-export function aggregatePlayer(observations: Observation[], versions: Map<string, VersionModel>, reference: VersionModel, minObservations: number): PlayerIndices {
+export function aggregatePlayer(
+  observations: Observation[], versions: Map<string, VersionModel>, reference: VersionModel, minObservations: number,
+  opts: { tests?: TestSession[]; fallbackKey?: FrameworkKey | null } = {},
+): PlayerIndices {
   const obs = observations.filter((o) => versions.has(o.versionId)).sort((a, b) => a.date.localeCompare(b.date));
-  const fk = modeKey(obs);
+  const fk = modeKey(obs) ?? opts.fallbackKey ?? null;
   const perDim: Record<DimensionCode, number[]> = Object.fromEntries(DIMENSION_CODES.map((d) => [d, []])) as never;
   const techBySource: Partial<Record<Context, number[]>> = {};
   const timeline: PlayerIndices["timeline"] = [];
@@ -232,7 +237,7 @@ export function aggregatePlayer(observations: Observation[], versions: Map<strin
       if (d === "technique") (techBySource[o.context] ??= []).push(dims[d].index!);
       else perDim[d].push(dims[d].index!);
     }
-    timeline.push({ id: o.id, date: o.date, context: o.context, ipi: weightedIndex(flat, v.dimensionWeights[o.frameworkKey]), dims: flat });
+    timeline.push({ id: o.id, date: o.date, context: o.context, versionId: o.versionId, frameworkKey: o.frameworkKey, ipi: weightedIndex(flat, v.dimensionWeights[o.frameworkKey]), dims: flat });
     const byId = new Map(v.criteria.map((c) => [c.id, c]));
     for (const s of o.scores) {
       const idx = scoreToIndex(s.score);
@@ -244,6 +249,15 @@ export function aggregatePlayer(observations: Observation[], versions: Map<strin
     }
   }
 
+  let testSessions = 0;
+  if (fk) {
+    for (const t of opts.tests ?? []) {
+      const idx = testTechniqueIndex(reference, fk, t.results);
+      if (idx == null) continue;
+      (techBySource.test ??= []).push(idx);
+      testSessions++;
+    }
+  }
   const tech = combineSources(techBySource);
   const dims = {} as PlayerIndices["dims"];
   for (const d of DIMENSION_CODES) {
@@ -274,6 +288,7 @@ export function aggregatePlayer(observations: Observation[], versions: Map<strin
     applicableCriteria: applicable.length,
     reliability,
     timeline,
+    testSessions,
     criteria: Object.fromEntries([...crit].map(([code, l]) => [code, { mean: mean(l)!, n: l.length }])),
   };
 }
@@ -294,3 +309,148 @@ export function teamDimensionIndices(players: PlayerIndices[], minObservations: 
 export const POSITION_FRAMEWORK_KEY: Record<string, FrameworkKey> = {
   GB: "GB", DC: "DC", DD: "DD_DG", DG: "DD_DG", PD: "PISTON", PG: "PISTON", N6: "N6", N8: "N8", N10: "N10", AD: "AILIERE", AG: "AILIERE", N9: "N9",
 };
+
+// ----------------------------------------------------------------- Tests techniques (§21)
+
+export const MEASURE_LABELS = { reussite: "Réussites / tentatives", temps: "Temps (secondes)" } as const;
+export type Measure = keyof typeof MEASURE_LABELS;
+
+/** Indice 0-100 d'un résultat (même formule que la base, pour l'aperçu pendant la saisie). */
+export function testResultIndex(r: { measure: Measure; attempts?: number | null; successes?: number | null; valueSeconds?: number | null; refBest?: number | null; refLimit?: number | null }): number | null {
+  if (r.measure === "reussite") {
+    if (!r.attempts || r.attempts <= 0 || r.successes == null || r.successes < 0 || r.successes > r.attempts) return null;
+    return round1((r.successes * 100) / r.attempts);
+  }
+  if (r.valueSeconds == null || r.valueSeconds <= 0 || r.refBest == null || r.refLimit == null || r.refBest >= r.refLimit) return null;
+  return round1(Math.max(0, Math.min(1, (r.refLimit - r.valueSeconds) / (r.refLimit - r.refBest))) * 100);
+}
+
+export type TestSession = { id: string; date: string; results: { criterionCodes: string[]; index: number | null }[] };
+
+/**
+ * Indice technique d'une séance de tests pour un poste : chaque protocole renseigne les critères
+ * techniques qu'il mesure ; on pondère avec les poids du poste. Les critères non mesurés ou non
+ * applicables au poste sont ignorés (jamais pénalisés).
+ */
+export function testTechniqueIndex(v: VersionModel, fk: FrameworkKey, results: TestSession["results"]): number | null {
+  const perCode = new Map<string, number[]>();
+  for (const r of results) {
+    if (r.index == null) continue;
+    for (const code of r.criterionCodes) (perCode.get(code) ?? perCode.set(code, []).get(code)!).push(r.index);
+  }
+  let num = 0;
+  let den = 0;
+  for (const c of v.criteria) {
+    if (c.dimension !== "technique") continue;
+    const vals = perCode.get(c.code);
+    const w = criterionWeight(v, c, fk);
+    if (!vals?.length || w == null) continue;
+    num += mean(vals)! * w;
+    den += w;
+  }
+  return den > 0 ? round1(num / den) : null;
+}
+
+export type TestPoint = {
+  protocolId: string; protocolName: string; protocolVersion: number; measure: Measure;
+  date: string; index: number | null; raw: number | null;
+};
+
+export type Comparison = {
+  kind: "test" | "evaluation";
+  key: string;
+  label: string;
+  first: { date: string; value: number };
+  last: { date: string; value: number };
+  n: number;
+  /** Progression absolue, en points d'indice. */
+  delta: number;
+  /** Progression relative, en % de la valeur de départ. */
+  relative: number | null;
+  /** Écart brut quand l'indice n'est pas calculable (test chronométré sans barème), en secondes. */
+  rawDelta?: number;
+};
+
+const pct = (from: number, to: number) => (from > 0 ? round1(((to - from) / from) * 100) : null);
+
+/**
+ * IDI (§29) : ne compare que des mesures comparables — même protocole ET même version pour les tests,
+ * même référentiel, même poste et même contexte pour les évaluations. Première et dernière mesure de la période.
+ * IDI = moyenne des progressions absolues (points) ; la progression relative moyenne est affichée à côté.
+ */
+export function developmentIndex(input: {
+  tests: TestPoint[];
+  timeline: Pick<PlayerIndices["timeline"][number], "date" | "context" | "versionId" | "frameworkKey" | "ipi">[];
+  versionNo?: (versionId: string) => number | undefined;
+}) {
+  const comparisons: Comparison[] = [];
+  const pending: Comparison[] = [];
+
+  const groups = new Map<string, TestPoint[]>();
+  for (const t of input.tests) {
+    const k = `${t.protocolId}|${t.protocolVersion}`;
+    (groups.get(k) ?? groups.set(k, []).get(k)!).push(t);
+  }
+  for (const [k, list] of groups) {
+    const sorted = [...list].sort((a, b) => a.date.localeCompare(b.date));
+    const label = `${sorted[0].protocolName}${sorted[0].protocolVersion > 1 ? ` (protocole v${sorted[0].protocolVersion})` : ""}`;
+    const withIndex = sorted.filter((t) => t.index != null);
+    if (withIndex.length >= 2) {
+      const a = withIndex[0];
+      const b = withIndex.at(-1)!;
+      comparisons.push({
+        kind: "test", key: k, label, n: withIndex.length,
+        first: { date: a.date, value: a.index! }, last: { date: b.date, value: b.index! },
+        delta: round1(b.index! - a.index!), relative: pct(a.index!, b.index!),
+      });
+      continue;
+    }
+    const withRaw = sorted.filter((t) => t.raw != null);
+    if (sorted[0].measure === "temps" && withRaw.length >= 2) {
+      const a = withRaw[0];
+      const b = withRaw.at(-1)!;
+      pending.push({
+        kind: "test", key: k, label, n: withRaw.length,
+        first: { date: a.date, value: a.raw! }, last: { date: b.date, value: b.raw! },
+        delta: 0, relative: null, rawDelta: round1(b.raw! - a.raw!),
+      });
+    }
+  }
+
+  const evals = new Map<string, typeof input.timeline>();
+  for (const t of input.timeline) {
+    if (t.ipi == null) continue;
+    const k = `${t.versionId}|${t.frameworkKey}|${t.context}`;
+    (evals.get(k) ?? evals.set(k, []).get(k)!).push(t);
+  }
+  for (const [k, list] of evals) {
+    if (list.length < 2) continue;
+    const sorted = [...list].sort((a, b) => a.date.localeCompare(b.date));
+    const a = sorted[0];
+    const b = sorted.at(-1)!;
+    const no = input.versionNo?.(a.versionId);
+    comparisons.push({
+      kind: "evaluation", key: k,
+      label: `Évaluations ${CONTEXT_LABELS[a.context].toLowerCase()} · ${FRAMEWORK_KEY_LABELS[a.frameworkKey]}${no ? ` (référentiel v${no})` : ""}`,
+      n: sorted.length, first: { date: a.date, value: a.ipi! }, last: { date: b.date, value: b.ipi! },
+      delta: round1(b.ipi! - a.ipi!), relative: pct(a.ipi!, b.ipi!),
+    });
+  }
+
+  const rel = comparisons.map((c) => c.relative).filter((x): x is number => x != null);
+  return {
+    idi: mean(comparisons.map((c) => c.delta)),
+    relative: mean(rel),
+    comparisons: comparisons.sort((a, b) => a.kind.localeCompare(b.kind) || a.label.localeCompare(b.label)),
+    /** Tests chronométrés comparables sans barème : écart en secondes, hors IDI. */
+    rawOnly: pending,
+  };
+}
+
+/** « +4,5 pts » / « −2 pts » / « 0 pt ». */
+export function fmtDelta(n: number | null, unit = "pts"): string {
+  if (n == null) return "—";
+  const v = String(Math.abs(n)).replace(".", ",");
+  if (n === 0) return `0 ${unit === "pts" ? "pt" : unit}`;
+  return `${n > 0 ? "+" : "−"}${v} ${unit}`;
+}

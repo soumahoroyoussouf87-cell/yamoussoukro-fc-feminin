@@ -30,5 +30,10 @@ Tests unitaires : `tests/unit/training-sheets.test.ts` ; sécurité base : bloc 
 - `tests/local/phase3-performance.test.ts` : référentiel initial (100 % par poste), figement des versions publiées, publication contrôlée, validation réservée et historisée, verrouillage, RLS (communication, administrateur, joueuse sans accès).
 - `tests/e2e/recette-performance.cjs` (14 étapes) : versions, notation, seuil « Données insuffisantes », IPI, radar, progression, droits de l'adjoint, mobile 390 px.
 
+## Phase 3 · livraison 2 (27/11/2026)
+- `tests/unit/technical-tests.test.ts` : indice d'un résultat, source Tests, IDI (versions, temps sans barème, évaluations comparables).
+- `tests/local/phase3-tests.test.ts` : 12 protocoles, versionnage, copie du protocole, indice, validation, verrouillage, RLS.
+- `tests/e2e/recette-tests.cjs` : 11 étapes (protocole, saisie adjoint, validation, progression, IDI, droits, mobile 390 px).
+
 ## À ajouter dans les phases suivantes
 Calcul des indices (N/E, seuils, sources), confidentialité du onze provisoire, accès clip vs vidéo source, confidentialité médicale, exports PDF/PNG, restauration de sauvegarde.

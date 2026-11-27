@@ -1499,6 +1499,102 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"technical_test_protocols": {
+                  Row: {
+                    "active": boolean,"attempts": number,"club_id": string,"code": string,"created_at": string,"criterion_codes": (string)[],"id": string,"measure": string,"name": string,"objective": string | null,"ref_best": number | null,"ref_limit": number | null,"setup": string,"sort_order": number,"updated_at": string,"version_no": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "active"?: boolean,"attempts": number,"club_id": string,"code": string,"created_at"?: string,"criterion_codes"?: (string)[],"id"?: string,"measure": string,"name": string,"objective"?: string | null,"ref_best"?: number | null,"ref_limit"?: number | null,"setup": string,"sort_order"?: number,"updated_at"?: string,"version_no"?: number
+                  }
+                  Update: {
+                    "active"?: boolean,"attempts"?: number,"club_id"?: string,"code"?: string,"created_at"?: string,"criterion_codes"?: (string)[],"id"?: string,"measure"?: string,"name"?: string,"objective"?: string | null,"ref_best"?: number | null,"ref_limit"?: number | null,"setup"?: string,"sort_order"?: number,"updated_at"?: string,"version_no"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "technical_test_protocols_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"technical_test_results": {
+                  Row: {
+                    "attempts": number | null,"club_id": string,"created_at": string,"criterion_codes": (string)[],"errors": number | null,"id": string,"index_value": number | null,"measure": string,"notes": string | null,"player_id": string,"protocol_id": string,"protocol_version": number,"recorded_by": string | null,"ref_best": number | null,"ref_limit": number | null,"successes": number | null,"test_session_id": string,"updated_at": string,"value_seconds": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "attempts"?: number | null,"club_id": string,"created_at"?: string,"criterion_codes"?: (string)[],"errors"?: number | null,"id"?: string,"index_value"?: number | null,"measure"?: string,"notes"?: string | null,"player_id": string,"protocol_id": string,"protocol_version"?: number,"recorded_by"?: string | null,"ref_best"?: number | null,"ref_limit"?: number | null,"successes"?: number | null,"test_session_id": string,"updated_at"?: string,"value_seconds"?: number | null
+                  }
+                  Update: {
+                    "attempts"?: number | null,"club_id"?: string,"created_at"?: string,"criterion_codes"?: (string)[],"errors"?: number | null,"id"?: string,"index_value"?: number | null,"measure"?: string,"notes"?: string | null,"player_id"?: string,"protocol_id"?: string,"protocol_version"?: number,"recorded_by"?: string | null,"ref_best"?: number | null,"ref_limit"?: number | null,"successes"?: number | null,"test_session_id"?: string,"updated_at"?: string,"value_seconds"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "technical_test_results_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "technical_test_results_player_id_fkey"
+      columns: ["player_id"]
+isOneToOne: false
+      referencedRelation: "player_current_availability"
+      referencedColumns: ["player_id"]
+    },{
+      foreignKeyName: "technical_test_results_player_id_fkey"
+      columns: ["player_id"]
+isOneToOne: false
+      referencedRelation: "players"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "technical_test_results_protocol_id_fkey"
+      columns: ["protocol_id"]
+isOneToOne: false
+      referencedRelation: "technical_test_protocols"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "technical_test_results_test_session_id_fkey"
+      columns: ["test_session_id"]
+isOneToOne: false
+      referencedRelation: "technical_test_sessions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"technical_test_sessions": {
+                  Row: {
+                    "club_id": string,"conditions": string | null,"created_at": string,"created_by": string | null,"id": string,"location": string | null,"notes": string | null,"player_ids": (string)[],"protocol_ids": (string)[],"published_at": string | null,"season_id": string | null,"status": Database["public"]['Enums']["workflow_status"],"tested_on": string,"title": string,"training_session_id": string | null,"updated_at": string,"validated_at": string | null,"validated_by": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"conditions"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"location"?: string | null,"notes"?: string | null,"player_ids"?: (string)[],"protocol_ids"?: (string)[],"published_at"?: string | null,"season_id"?: string | null,"status"?: Database["public"]['Enums']["workflow_status"],"tested_on": string,"title": string,"training_session_id"?: string | null,"updated_at"?: string,"validated_at"?: string | null,"validated_by"?: string | null
+                  }
+                  Update: {
+                    "club_id"?: string,"conditions"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"location"?: string | null,"notes"?: string | null,"player_ids"?: (string)[],"protocol_ids"?: (string)[],"published_at"?: string | null,"season_id"?: string | null,"status"?: Database["public"]['Enums']["workflow_status"],"tested_on"?: string,"title"?: string,"training_session_id"?: string | null,"updated_at"?: string,"validated_at"?: string | null,"validated_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "technical_test_sessions_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "technical_test_sessions_season_id_fkey"
+      columns: ["season_id"]
+isOneToOne: false
+      referencedRelation: "seasons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "technical_test_sessions_training_session_id_fkey"
+      columns: ["training_session_id"]
+isOneToOne: false
+      referencedRelation: "training_sessions"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"training_attendance": {
                   Row: {
                     "club_id": string,"created_at": string,"id": string,"minutes": number | null,"note": string | null,"participation": string | null,"player_id": string,"recorded_by": string | null,"rpe": number | null,"session_id": string,"srpe": number | null,"status": Database["public"]['Enums']["attendance_status"],"updated_at": string
