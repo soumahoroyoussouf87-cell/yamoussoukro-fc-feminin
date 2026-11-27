@@ -49,6 +49,9 @@ export default async function PlayerPerformancePage({ params, searchParams }: Pa
   const fk = x?.frameworkKey ?? (primary ? POSITION_FRAMEWORK_KEY[primary.code] : null) ?? null;
   const byId = new Map(rows.map((r) => [r.id, r]));
   const name = `${player.first_name} ${player.last_name}`;
+  const { data: plan } = can(ctx, "development.read")
+    ? await supabase.from("development_plans").select("id").eq("player_id", id).eq("status", "actif").order("ends_on").limit(1).maybeSingle()
+    : { data: null };
 
   return (
     <div>
@@ -57,6 +60,8 @@ export default async function PlayerPerformancePage({ params, searchParams }: Pa
         actions={
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline"><Link href={`/effectif/${id}`}>Fiche joueuse</Link></Button>
+            {plan ? <Button asChild variant="outline"><Link href={`/developpement/${plan.id}`}>Plan de développement</Link></Button>
+              : can(ctx, "development.write") ? <Button asChild variant="outline"><Link href={`/developpement/nouveau?portee=individuel&joueuse=${id}`}>Créer un plan de développement</Link></Button> : null}
             {can(ctx, "evaluations.write") ? <Button asChild><Link href="/performance/evaluations/nouvelle"><Plus />Évaluer</Link></Button> : null}
           </div>
         } />

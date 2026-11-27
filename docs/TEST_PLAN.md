@@ -49,5 +49,9 @@ Tests unitaires : `tests/unit/training-sheets.test.ts` ; sécurité base : bloc 
 - `tests/local/phase3-set-pieces.test.ts` : création, joueuse d'un autre club, tireuse en double, rôle vide, catégorie invalide, confidentialité (intendance, communication, joueuse), archivage, journal, suppression.
 - `tests/e2e/recette-l5.cjs` : 10 étapes (tableau tactique avec noms et 2 étapes, PDF de toutes les étapes, création d'une combinaison, fiche et tireuses, schéma animé, carnet imprimable, dupliquer / archiver / restaurer / supprimer, droits, mobile 390 px).
 
+## Phase 4 · livraison 1 (27/11/2026)
+- `tests/local/phase4-development.test.ts` : notification du responsable, portée et dates contrôlées, cohérence club, statut des objectifs suivant la dernière réévaluation (même saisie après coup), clôture, objectif étranger refusé, RPC tout-ou-rien, confidentialité (analyste en lecture seule, communication et joueuses sans accès).
+- `tests/e2e/recette-pdi.cjs` : 10 étapes (création depuis le profil 360°, point de départ, objectifs suggérés et libres, exercices correctifs, réévaluation, vues transversales, plans sectoriel et collectif, clôture, tableau de bord, impression, droits, mobile 390 px).
+
 ## À ajouter dans les phases suivantes
 Calcul des indices (N/E, seuils, sources), confidentialité du onze provisoire, accès clip vs vidéo source, confidentialité médicale, exports PDF/PNG, restauration de sauvegarde.

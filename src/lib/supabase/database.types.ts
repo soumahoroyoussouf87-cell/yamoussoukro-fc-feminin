@@ -383,6 +383,160 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"development_actions": {
+                  Row: {
+                    "club_id": string,"created_at": string,"exercise_id": string | null,"frequency": string | null,"id": string,"label": string,"notes": string | null,"objective_id": string,"sort_order": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"exercise_id"?: string | null,"frequency"?: string | null,"id"?: string,"label": string,"notes"?: string | null,"objective_id": string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"exercise_id"?: string | null,"frequency"?: string | null,"id"?: string,"label"?: string,"notes"?: string | null,"objective_id"?: string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "development_actions_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "development_actions_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "development_actions_objective_id_fkey"
+      columns: ["objective_id"]
+isOneToOne: false
+      referencedRelation: "development_objectives"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"development_objectives": {
+                  Row: {
+                    "baseline": number | null,"club_id": string,"created_at": string,"criterion_code": string | null,"dimension": string | null,"due_on": string | null,"id": string,"label": string,"measure": string | null,"plan_id": string,"priority": string,"sort_order": number,"status": string,"target": number | null,"unit": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "baseline"?: number | null,"club_id": string,"created_at"?: string,"criterion_code"?: string | null,"dimension"?: string | null,"due_on"?: string | null,"id"?: string,"label": string,"measure"?: string | null,"plan_id": string,"priority"?: string,"sort_order"?: number,"status"?: string,"target"?: number | null,"unit"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "baseline"?: number | null,"club_id"?: string,"created_at"?: string,"criterion_code"?: string | null,"dimension"?: string | null,"due_on"?: string | null,"id"?: string,"label"?: string,"measure"?: string | null,"plan_id"?: string,"priority"?: string,"sort_order"?: number,"status"?: string,"target"?: number | null,"unit"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "development_objectives_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "development_objectives_plan_id_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "development_plans"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"development_plans": {
+                  Row: {
+                    "analysis": string | null,"closed_at": string | null,"club_id": string,"created_at": string,"created_by": string | null,"ends_on": string,"findings": string | null,"id": string,"next_review_on": string | null,"owner_staff_id": string | null,"player_id": string | null,"scope": string,"sector_code": string | null,"starts_on": string,"status": string,"title": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "analysis"?: string | null,"closed_at"?: string | null,"club_id": string,"created_at"?: string,"created_by"?: string | null,"ends_on": string,"findings"?: string | null,"id"?: string,"next_review_on"?: string | null,"owner_staff_id"?: string | null,"player_id"?: string | null,"scope": string,"sector_code"?: string | null,"starts_on": string,"status"?: string,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "analysis"?: string | null,"closed_at"?: string | null,"club_id"?: string,"created_at"?: string,"created_by"?: string | null,"ends_on"?: string,"findings"?: string | null,"id"?: string,"next_review_on"?: string | null,"owner_staff_id"?: string | null,"player_id"?: string | null,"scope"?: string,"sector_code"?: string | null,"starts_on"?: string,"status"?: string,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "development_plans_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "development_plans_owner_staff_id_fkey"
+      columns: ["owner_staff_id"]
+isOneToOne: false
+      referencedRelation: "staff_members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "development_plans_player_id_fkey"
+      columns: ["player_id"]
+isOneToOne: false
+      referencedRelation: "player_current_availability"
+      referencedColumns: ["player_id"]
+    },{
+      foreignKeyName: "development_plans_player_id_fkey"
+      columns: ["player_id"]
+isOneToOne: false
+      referencedRelation: "players"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"development_review_items": {
+                  Row: {
+                    "club_id": string,"comment": string | null,"created_at": string,"id": string,"objective_id": string,"review_id": string,"status": string,"updated_at": string,"value": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"comment"?: string | null,"created_at"?: string,"id"?: string,"objective_id": string,"review_id": string,"status": string,"updated_at"?: string,"value"?: number | null
+                  }
+                  Update: {
+                    "club_id"?: string,"comment"?: string | null,"created_at"?: string,"id"?: string,"objective_id"?: string,"review_id"?: string,"status"?: string,"updated_at"?: string,"value"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "development_review_items_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "development_review_items_objective_id_fkey"
+      columns: ["objective_id"]
+isOneToOne: false
+      referencedRelation: "development_objectives"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "development_review_items_review_id_fkey"
+      columns: ["review_id"]
+isOneToOne: false
+      referencedRelation: "development_reviews"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"development_reviews": {
+                  Row: {
+                    "club_id": string,"created_at": string,"created_by": string | null,"decision": string,"facts": string | null,"id": string,"interpretation": string | null,"next_review_on": string | null,"plan_id": string,"reviewed_on": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"created_by"?: string | null,"decision": string,"facts"?: string | null,"id"?: string,"interpretation"?: string | null,"next_review_on"?: string | null,"plan_id": string,"reviewed_on": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"created_by"?: string | null,"decision"?: string,"facts"?: string | null,"id"?: string,"interpretation"?: string | null,"next_review_on"?: string | null,"plan_id"?: string,"reviewed_on"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "development_reviews_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "development_reviews_plan_id_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "development_plans"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"evaluation_criteria": {
                   Row: {
                     "club_id": string,"code": string,"created_at": string,"default_weight": number | null,"description": string | null,"dimension_id": string,"id": string,"label": string,"sort_order": number,"updated_at": string,"version_id": string
@@ -2179,7 +2333,10 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "bootstrap_first_admin":
+            "add_development_review":
+{ Args: { "p_items": Json,"p_plan": string,"p_review": Json }; Returns: string
+                           },
+"bootstrap_first_admin":
 { Args: { "p_club": string,"p_email": string }; Returns: undefined
                            },
 "clone_framework_version":

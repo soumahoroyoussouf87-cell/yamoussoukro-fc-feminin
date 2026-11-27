@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## [0.9.0] — 2026-11-27 — Phase 4 · livraison 1 : plans de développement (PDI)
+
+### Ajouté
+- Plans de développement (migration 015) individuels, sectoriels et collectifs : période, responsable du suivi (notifié), constats factuels et analyse du staff séparés, statut.
+- Objectifs mesurables : dimension, mesure, point de départ, cible, unité, échéance, priorité. Pour une joueuse, le point de départ et les axes de travail viennent des évaluations validées (Phase 3) ; la mesure actuelle d'un objectif relié à un critère est relue en direct (aucune copie).
+- Exercices correctifs : exercice de la bibliothèque ou consigne libre, fréquence ; vue regroupée par exercice pour préparer les séances.
+- Réévaluations datées : résultat et valeur mesurée par objectif, faits et interprétation, décision (poursuivre, ajuster, prolonger, clôturer), prochaine échéance reportée sur le plan ; enregistrement tout-ou-rien (`add_development_review`).
+- Vues Objectifs et Réévaluations (retards signalés), carte « Réévaluations à faire » sur le tableau de bord, lien depuis le profil 360°, plan imprimable (PDF/PNG) avec signatures.
+
 ## [0.8.0] — 2026-11-27 — Phase 3 · livraison 5 : tableau tactique et coups de pied arrêtés
 
 ### Ajouté

@@ -61,6 +61,11 @@ export default async function DashboardPage() {
       .order("due_on", { ascending: true, nullsFirst: false }).limit(5)
     : { data: [] as { id: string; title: string; due_on: string | null; priority: string }[] };
   const todayIso = new Date().toISOString().slice(0, 10);
+  const reviewLimit = new Date(Date.parse(`${todayIso}T00:00:00Z`) + 7 * 86400000).toISOString().slice(0, 10);
+  const { data: dueReviews } = can(ctx, "development.read")
+    ? await supabase.from("development_plans").select("id, title, scope, sector_code, next_review_on, players(first_name, last_name)")
+      .eq("club_id", ctx.clubId).eq("status", "actif").lte("next_review_on", reviewLimit).order("next_review_on").limit(5)
+    : { data: null };
   const coll = perf && club.season ? await teamIndices(ctx, { from: club.season.starts_on, to: club.season.ends_on }) : null;
   const team = perf ? teamDimensionIndices(perf.rows.map((x) => x.indices), perf.min) : null;
   const focus = perf?.rows.filter((x) => x.indices.observations > 0).sort((a, b) => (b.indices.to ?? "").localeCompare(a.indices.to ?? ""))[0] ?? null;
@@ -93,7 +98,7 @@ export default async function DashboardPage() {
     { label: "Évaluer une joueuse", icon: Target, href: can(ctx, "evaluations.write") ? "/performance/evaluations/nouvelle" : undefined, phase: 3 },
     { label: "Évaluer le collectif", icon: Shield, href: can(ctx, "evaluations.write") ? "/performance/collective/nouvelle" : undefined, phase: 3 },
     { label: "Importer une vidéo", icon: Video, phase: 4 },
-    { label: "Créer un objectif", icon: Goal, phase: 4 },
+    { label: "Créer un objectif", icon: Goal, href: can(ctx, "development.write") ? "/developpement/nouveau" : undefined, phase: 4 },
     { label: "Générer un rapport", icon: FileBarChart, href: can(ctx, "evaluations.read") ? "/rapports/performance" : undefined, phase: 3 },
     { label: "Créer une tâche", icon: ClipboardList, href: "/taches", phase: 3 },
   ];
@@ -414,6 +419,30 @@ export default async function DashboardPage() {
           )}
         </CardContent>
       </Card>
+
+      {dueReviews ? (
+        <Card>
+          <CardHeader className="flex-row items-center justify-between gap-2">
+            <div><CardTitle className="text-base">Réévaluations à faire</CardTitle><CardDescription>Plans de développement à réévaluer d&apos;ici 7 jours (ou en retard).</CardDescription></div>
+            <Button asChild variant="outline" size="sm"><Link href="/developpement/reevaluations">Toutes les réévaluations</Link></Button>
+          </CardHeader>
+          <CardContent>
+            {dueReviews.length === 0 ? <p className="text-sm text-muted-foreground">Aucune réévaluation à faire cette semaine.</p> : (
+              <ul className="divide-y text-sm">
+                {dueReviews.map((p) => {
+                  const pl = p.players as unknown as { first_name: string; last_name: string } | null;
+                  return (
+                    <li key={p.id} className="flex items-center justify-between gap-2 py-1.5">
+                      <Link href={`/developpement/${p.id}`} className="min-w-0 truncate hover:underline">{pl ? `${pl.first_name} ${pl.last_name} — ` : ""}{p.title}</Link>
+                      <span className={`whitespace-nowrap text-xs ${p.next_review_on! < todayIso ? "font-semibold text-danger" : "text-muted-foreground"}`}>{p.next_review_on!.split("-").reverse().join("/")}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+      ) : null}
 
       {/* Accès rapides */}
       <section aria-labelledby="quick-title">

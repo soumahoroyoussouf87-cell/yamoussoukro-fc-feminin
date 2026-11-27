@@ -89,3 +89,11 @@ Toutes les valeurs proviennent des données saisies. « Non évalué » signifie
 - **Coups de pied arrêtés** (menu Tactique) : « Nouvelle combinaison », choisis la catégorie, le nom et le côté, puis « Créer et dessiner ». Remplis le signal, les consignes, ajoute les tireuses (flèches pour changer l'ordre) et les responsabilités de chaque joueuse : tout s'enregistre seul. Dessine la combinaison sur le tableau puis « Enregistrer le schéma ».
 - « Imprimer le carnet » sort toutes les combinaisons en vigueur ; « Imprimer la fiche » une seule. Une combinaison qui ne sert plus s'archive (elle reste consultable via « Voir les combinaisons archivées »).
 - Réservé au staff technique : la communication, l'intendance et les joueuses n'y ont pas accès.
+
+## Plans de développement (Phase 4, 27/11/2026)
+- Menu **Développement › Plans individuels** (ou sectoriels, collectifs), puis « Nouveau plan ». Depuis le profil 360° d'une joueuse, « Créer un plan de développement » la présélectionne.
+- Dans le plan : le **point de départ** reprend les évaluations validées. Écris les constats (faits) et ton analyse séparément. Ajoute les objectifs : les boutons « + » proposent les axes de travail repérés dans les évaluations ; sinon écris l'objectif, puis le départ, la cible et l'échéance.
+- Sous chaque objectif, **prescris** un exercice de la bibliothèque ou une consigne libre, avec sa fréquence.
+- **Nouvelle réévaluation** : pour chaque objectif, la valeur mesurée et le résultat ; puis la décision et la date de la suivante. « Clôturer le plan » le termine.
+- **Imprimer le plan** sort une fiche PDF avec signatures. La carte « Réévaluations à faire » du tableau de bord rappelle les échéances.
+

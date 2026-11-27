@@ -115,12 +115,12 @@ export const NAVIGATION: NavSection[] = [
   {
     title: "Développement",
     items: [
-      { label: "Plans individuels", icon: Target, phase: 4 },
-      { label: "Plans sectoriels", icon: Target, phase: 4 },
-      { label: "Plans collectifs", icon: Target, phase: 4 },
-      { label: "Objectifs", icon: Goal, phase: 4 },
-      { label: "Exercices correctifs", icon: Dumbbell, phase: 4 },
-      { label: "Réévaluations", icon: Repeat, phase: 4 },
+      { label: "Plans individuels", icon: Target, href: "/developpement?portee=individuel", phase: 4, permission: "development.read" },
+      { label: "Plans sectoriels", icon: Target, href: "/developpement?portee=sectoriel", phase: 4, permission: "development.read" },
+      { label: "Plans collectifs", icon: Target, href: "/developpement?portee=collectif", phase: 4, permission: "development.read" },
+      { label: "Objectifs", icon: Goal, href: "/developpement/objectifs", phase: 4, permission: "development.read" },
+      { label: "Exercices correctifs", icon: Dumbbell, href: "/developpement/exercices", phase: 4, permission: "development.read" },
+      { label: "Réévaluations", icon: Repeat, href: "/developpement/reevaluations", phase: 4, permission: "development.read" },
     ],
   },
   {
