@@ -78,3 +78,8 @@ Toutes les valeurs proviennent des données saisies. « Non évalué » signifie
 - **Tactique › Systèmes de jeu** : créez le système du club, déplacez les joueuses sur le terrain, ajoutez les animations (possession, hors possession, transitions).
 - **Performance › Collective › Évaluer le collectif** (ou depuis le Match Center) : notez les principes observés, les secteurs, les relations entre lignes et les distances. N/E ne pénalise pas. Soumettez ; l'entraîneur principal valide.
 - Les indices IPC, IMP, IPS et IPR apparaissent à partir du seuil d'évaluations validées réglé dans les paramètres.
+
+## Adversaires, rapports et tâches (Phase 3, 27/11/2026)
+- **Tactique › Analyse des adversaires** : ouvrez l'adversaire, « Nouvelle fiche d'observation », remplissez les faits observés puis la lecture du staff (enregistrement automatique). Le bouton « Rapport d'avant-match » prépare le document du prochain match.
+- **Rapports** : choisissez la période, puis ouvrez le rapport collectif, le bilan, un rapport d'avant-match ou le rapport d'une joueuse. « Imprimer / Enregistrer en PDF » pour obtenir un PDF.
+- **Pilotage › Tâches du staff** : « Nouvelle tâche », confiez-la à un membre du staff (il est notifié), cochez-la quand elle est faite.

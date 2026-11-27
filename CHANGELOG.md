@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [0.7.0] — 2026-11-27 — Phase 3 · livraison 4 : adversaires, rapports et tâches du staff
+
+### Ajouté
+- Analyse des adversaires (migration 013) : fiches d'observation confidentielles (staff technique) par adversaire et par match, faits observés (possession, hors possession, transitions, coups de pied arrêtés, joueuses clés) séparés de la lecture du staff (forces, faiblesses, interprétation, plan de jeu), sauvegarde automatique, confrontations. Les prochains adversaires apparaissent en premier.
+- Rapports imprimables (PDF via le navigateur, PNG) aux couleurs du club : rapport d'avant-match, rapport individuel, rapport collectif (sectoriel et intersectoriel), bilan périodique (mensuel, saison). Construits uniquement à partir des données validées.
+- Tâches du staff : création, attribution à un membre du staff (notification), échéance, priorité, statut, lien vers un match ou une séance, retards signalés, carte « Mes tâches » sur le tableau de bord.
+
 ## [0.6.0] — 2026-11-27 — Phase 3 · livraison 3 : projet de jeu et performance collective
 
 ### Ajouté

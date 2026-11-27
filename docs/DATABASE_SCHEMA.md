@@ -87,5 +87,9 @@ Fonctions : `app.set_updated_by()`, `app.guard_same_club()` (phase, schéma et t
 - RPC `clone_game_model_version`, `publish_game_model_version` (100 % et un principe par moment pondéré). Projet initial : `app.seed_game_model`.
 - RLS : lecture `evaluations.read` ; projet, systèmes, objectifs `frameworks.manage` ; évaluations `evaluations.write` (validation `evaluations.validate`).
 
+## Adversaires et tâches du staff (migration 013)
+- `opponent_scouting` : fiche d'observation (adversaire, match facultatif du même adversaire, date, source, système habituel, faits par moment, joueuses clés, forces, faiblesses, interprétation, plan de jeu). RLS `evaluations.read` / `evaluations.write`.
+- `staff_tasks` : titre, détails, `assignee_staff_id`, échéance, priorité, statut (`completed_at` posé par la base), match ou séance liés. Lecture et création : staff du club ; modification : auteur, personne désignée, `staff.write` ou `planning.write` (`app.can_edit_task`) ; notification de la personne désignée (`app.notify_staff_task`).
+
 ## Tables prévues (phases 3 à 6)
 Conformément au §45 du cahier des charges : planification, compétition complète (`match_squads`, `lineups` avec statut de workflow et historique, `match_events`, `delegations`…), tactique (`game_models`, `game_model_versions`…), performance (`evaluation_frameworks`, `framework_versions`, `position_criteria_weights`, `evaluation_scores`, `evaluation_evidence`, `performance_snapshots`…), vidéo (`videos`, `video_clips`, `clip_players`, `video_access_grants`…), développement, sport science, schéma `medical` séparé, `approval_workflows` / `approval_history`, `ai_reports` / `ai_report_sources`.

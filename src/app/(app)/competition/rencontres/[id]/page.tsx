@@ -72,6 +72,7 @@ export default async function MatchCenterPage({ params, searchParams }: PageProp
         <Button asChild variant="outline" size="sm"><Link href={`/impression/onze/${id}`} target="_blank"><Printer />Onze de départ</Link></Button>
         <Button asChild variant="outline" size="sm"><Link href={`/impression/delegation/${id}`} target="_blank"><Printer />Délégation officielle</Link></Button>
         {can(ctx, "evaluations.write") ? <Button asChild variant="outline" size="sm"><Link href={`/performance/collective/nouvelle?match=${id}`}>Évaluer le collectif</Link></Button> : null}
+        {can(ctx, "evaluations.read") ? <Button asChild variant="outline" size="sm"><Link href={`/impression/avant-match/${id}`} target="_blank"><Printer />Rapport d&apos;avant-match</Link></Button> : null}
         <span className="flex-1" />
         {can(ctx, "matches.write") ? <ActionButton action={deleteMatch.bind(null, id)} confirm="Supprimer le match et tout son dossier">Supprimer le match</ActionButton> : null}
       </div>

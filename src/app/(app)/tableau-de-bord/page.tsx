@@ -5,6 +5,7 @@ import {
   Shield, Shirt, ShieldAlert, Target, Trophy, UserPlus, Users, UserX, Video,
 } from "lucide-react";
 import { requirePermission, can } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { getClubHeader } from "@/lib/club";
 import { getDashboardData } from "@/lib/data/dashboard";
 import { getPhase2Widgets } from "@/lib/data/dashboard-phase2";
@@ -53,6 +54,13 @@ export default async function DashboardPage() {
   const perf = can(ctx, "evaluations.read") && club.season
     ? await squadIndices(ctx, { from: club.season.starts_on, to: club.season.ends_on })
     : null;
+  const supabase = await createClient();
+  const { data: meStaff } = await supabase.from("staff_members").select("id").eq("club_id", ctx.clubId).eq("profile_id", ctx.userId).maybeSingle();
+  const { data: myTasks } = meStaff
+    ? await supabase.from("staff_tasks").select("id, title, due_on, priority").eq("assignee_staff_id", meStaff.id).in("status", ["a_faire", "en_cours"])
+      .order("due_on", { ascending: true, nullsFirst: false }).limit(5)
+    : { data: [] as { id: string; title: string; due_on: string | null; priority: string }[] };
+  const todayIso = new Date().toISOString().slice(0, 10);
   const coll = perf && club.season ? await teamIndices(ctx, { from: club.season.starts_on, to: club.season.ends_on }) : null;
   const team = perf ? teamDimensionIndices(perf.rows.map((x) => x.indices), perf.min) : null;
   const focus = perf?.rows.filter((x) => x.indices.observations > 0).sort((a, b) => (b.indices.to ?? "").localeCompare(a.indices.to ?? ""))[0] ?? null;
@@ -86,7 +94,8 @@ export default async function DashboardPage() {
     { label: "Évaluer le collectif", icon: Shield, href: can(ctx, "evaluations.write") ? "/performance/collective/nouvelle" : undefined, phase: 3 },
     { label: "Importer une vidéo", icon: Video, phase: 4 },
     { label: "Créer un objectif", icon: Goal, phase: 4 },
-    { label: "Générer un rapport", icon: FileBarChart, phase: 3 },
+    { label: "Générer un rapport", icon: FileBarChart, href: can(ctx, "evaluations.read") ? "/rapports/performance" : undefined, phase: 3 },
+    { label: "Créer une tâche", icon: ClipboardList, href: "/taches", phase: 3 },
   ];
 
   return (
@@ -383,6 +392,26 @@ export default async function DashboardPage() {
               );
             })}
           </ul>
+        </CardContent>
+      </Card>
+
+      {/* Mes tâches */}
+      <Card>
+        <CardHeader className="flex-row items-center justify-between gap-2">
+          <div><CardTitle className="text-base">Mes tâches</CardTitle><CardDescription>Tâches qui vous sont confiées, par échéance.</CardDescription></div>
+          <Button asChild variant="outline" size="sm"><Link href="/taches">Toutes les tâches</Link></Button>
+        </CardHeader>
+        <CardContent>
+          {(myTasks ?? []).length === 0 ? <p className="text-sm text-muted-foreground">Aucune tâche en cours pour vous.</p> : (
+            <ul className="divide-y text-sm">
+              {(myTasks ?? []).map((t) => (
+                <li key={t.id} className="flex items-center justify-between gap-2 py-1.5">
+                  <span className="min-w-0 truncate">{t.priority === "haute" ? <Badge variant="warning" className="mr-1">Haute</Badge> : null}{t.title}</span>
+                  <span className={`whitespace-nowrap text-xs ${t.due_on && t.due_on < todayIso ? "font-semibold text-danger" : "text-muted-foreground"}`}>{t.due_on ? t.due_on.split("-").reverse().join("/") : "Sans échéance"}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
 

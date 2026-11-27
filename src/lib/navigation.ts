@@ -26,7 +26,7 @@ export const NAVIGATION: NavSection[] = [
       { label: "Tableau de bord", icon: LayoutDashboard, href: "/tableau-de-bord", phase: 1, permission: "dashboard.read" },
       { label: "Agenda", icon: Calendar, href: "/planification/calendrier", phase: 2, permission: "planning.read" },
       { label: "Notifications", icon: Bell, href: "/notifications", phase: 1 },
-      { label: "Tâches du staff", icon: ListTodo, phase: 3 },
+      { label: "Tâches du staff", icon: ListTodo, href: "/taches", phase: 3 },
     ],
   },
   {
@@ -82,7 +82,7 @@ export const NAVIGATION: NavSection[] = [
       { label: "Systèmes de jeu", icon: Network, href: "/projet-de-jeu/systemes", phase: 3, permission: "evaluations.read" },
       { label: "Tableau tactique", icon: Map, phase: 3 },
       { label: "Principes et sous-principes", icon: ScrollText, href: "/projet-de-jeu", phase: 3, permission: "evaluations.read" },
-      { label: "Analyse des adversaires", icon: Swords, phase: 3 },
+      { label: "Analyse des adversaires", icon: Swords, href: "/tactique/adversaires", phase: 3, permission: "evaluations.read" },
       { label: "Coups de pied arrêtés", icon: Flag, phase: 3 },
     ],
   },
@@ -145,11 +145,11 @@ export const NAVIGATION: NavSection[] = [
   {
     title: "Rapports",
     items: [
-      { label: "Rapports individuels", icon: FileText, phase: 3 },
-      { label: "Rapports sectoriels", icon: FileText, phase: 3 },
-      { label: "Rapports collectifs", icon: FileText, phase: 3 },
+      { label: "Rapports individuels", icon: FileText, href: "/rapports/performance#individuels", phase: 3, permission: "evaluations.read" },
+      { label: "Rapports sectoriels", icon: FileText, href: "/rapports/performance#collectifs", phase: 3, permission: "evaluations.read" },
+      { label: "Rapports collectifs", icon: FileText, href: "/rapports/performance#collectifs", phase: 3, permission: "evaluations.read" },
       { label: "Rapports de match", icon: FileText, href: "/rapports/matchs", phase: 2, permission: "matches.read" },
-      { label: "Bilans périodiques", icon: FileText, phase: 3 },
+      { label: "Bilans périodiques", icon: FileText, href: "/rapports/performance#bilans", phase: 3, permission: "evaluations.read" },
       { label: "Documents officiels", icon: FileText, href: "/rapports/documents", phase: 2, permission: "matches.read" },
     ],
   },

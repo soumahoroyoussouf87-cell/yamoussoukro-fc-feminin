@@ -1223,6 +1223,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"opponent_scouting": {
+                  Row: {
+                    "club_id": string,"created_at": string,"created_by": string | null,"game_plan": string | null,"id": string,"in_possession": string | null,"interpretation": string | null,"key_players": string | null,"match_id": string | null,"observed_on": string,"opponent_id": string,"out_possession": string | null,"set_pieces": string | null,"source": string,"source_detail": string | null,"strengths": string | null,"transitions": string | null,"updated_at": string,"usual_system": string | null,"weaknesses": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"created_by"?: string | null,"game_plan"?: string | null,"id"?: string,"in_possession"?: string | null,"interpretation"?: string | null,"key_players"?: string | null,"match_id"?: string | null,"observed_on": string,"opponent_id": string,"out_possession"?: string | null,"set_pieces"?: string | null,"source"?: string,"source_detail"?: string | null,"strengths"?: string | null,"transitions"?: string | null,"updated_at"?: string,"usual_system"?: string | null,"weaknesses"?: string | null
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"created_by"?: string | null,"game_plan"?: string | null,"id"?: string,"in_possession"?: string | null,"interpretation"?: string | null,"key_players"?: string | null,"match_id"?: string | null,"observed_on"?: string,"opponent_id"?: string,"out_possession"?: string | null,"set_pieces"?: string | null,"source"?: string,"source_detail"?: string | null,"strengths"?: string | null,"transitions"?: string | null,"updated_at"?: string,"usual_system"?: string | null,"weaknesses"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "opponent_scouting_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "opponent_scouting_match_id_fkey"
+      columns: ["match_id"]
+isOneToOne: false
+      referencedRelation: "matches"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "opponent_scouting_opponent_id_fkey"
+      columns: ["opponent_id"]
+isOneToOne: false
+      referencedRelation: "opponents"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"opponents": {
                   Row: {
                     "city": string | null,"club_id": string,"created_at": string,"id": string,"logo_path": string | null,"name": string,"updated_at": string
@@ -1752,6 +1784,44 @@ isOneToOne: false
       columns: ["team_id"]
 isOneToOne: false
       referencedRelation: "teams"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"staff_tasks": {
+                  Row: {
+                    "assignee_staff_id": string | null,"club_id": string,"completed_at": string | null,"created_at": string,"created_by": string | null,"description": string | null,"due_on": string | null,"id": string,"match_id": string | null,"priority": string,"status": string,"title": string,"training_session_id": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "assignee_staff_id"?: string | null,"club_id": string,"completed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"description"?: string | null,"due_on"?: string | null,"id"?: string,"match_id"?: string | null,"priority"?: string,"status"?: string,"title": string,"training_session_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "assignee_staff_id"?: string | null,"club_id"?: string,"completed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"description"?: string | null,"due_on"?: string | null,"id"?: string,"match_id"?: string | null,"priority"?: string,"status"?: string,"title"?: string,"training_session_id"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "staff_tasks_assignee_staff_id_fkey"
+      columns: ["assignee_staff_id"]
+isOneToOne: false
+      referencedRelation: "staff_members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "staff_tasks_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "staff_tasks_match_id_fkey"
+      columns: ["match_id"]
+isOneToOne: false
+      referencedRelation: "matches"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "staff_tasks_training_session_id_fkey"
+      columns: ["training_session_id"]
+isOneToOne: false
+      referencedRelation: "training_sessions"
       referencedColumns: ["id"]
     }
                   ]

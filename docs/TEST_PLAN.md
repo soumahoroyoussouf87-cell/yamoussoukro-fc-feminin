@@ -40,5 +40,9 @@ Tests unitaires : `tests/unit/training-sheets.test.ts` ; sécurité base : bloc 
 - `tests/local/phase3-game-model.test.ts` : projet initial (41 principes, 100 %), figement, clone et publication contrôlée, systèmes, validation, verrouillage, copie de l'objectif de compacité, RLS.
 - `tests/e2e/recette-collective.cjs` : 12 étapes (brouillon, systèmes au clavier, saisie adjoint, validation, seuil, IPC, tableau de bord, Match Center, droits, mobile 390 px).
 
+## Phase 3 · livraison 4 (27/11/2026)
+- `tests/local/phase3-scouting-tasks.test.ts` : confidentialité des fiches adversaires, cohérence adversaire / match, attribution et notification des tâches, droits de modification et de suppression, date de fin.
+- `tests/e2e/recette-l4.cjs` : 8 étapes (fiche adversaire, rapport d'avant-match, rapports individuel / collectif / bilan avec logo, tâche confiée puis terminée, droits, mobile 390 px).
+
 ## À ajouter dans les phases suivantes
 Calcul des indices (N/E, seuils, sources), confidentialité du onze provisoire, accès clip vs vidéo source, confidentialité médicale, exports PDF/PNG, restauration de sauvegarde.
