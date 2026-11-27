@@ -89,12 +89,13 @@ export const NAVIGATION: NavSection[] = [
   {
     title: "Performance",
     items: [
-      { label: "Performance individuelle", icon: Gauge, phase: 3 },
+      { label: "Performance individuelle", icon: Gauge, href: "/performance/individuelle", phase: 3, permission: "evaluations.read" },
+      { label: "Évaluations", icon: ClipboardCheck, href: "/performance/evaluations", phase: 3, permission: "evaluations.read" },
       { label: "Performance sectorielle", icon: Gauge, phase: 3 },
       { label: "Performance intersectorielle", icon: Network, phase: 3 },
       { label: "Performance collective", icon: Users, phase: 3 },
       { label: "Tests techniques", icon: Timer, phase: 3 },
-      { label: "Référentiels d'évaluation", icon: ScrollText, phase: 3 },
+      { label: "Référentiels d'évaluation", icon: ScrollText, href: "/performance/referentiels", phase: 3, permission: "evaluations.read" },
     ],
   },
   {

@@ -25,5 +25,10 @@ Les données de recette (`tests/e2e/fixtures/phase2-setup.sql`) ne servent que s
 `node tests/e2e/recette-seances.cjs` (après la recette Phase 2) : 16 étapes — création, horaires contrôlés, thèmes, 2 phases et 3 exercices (durée calculée 60 min), réorganisation, consignes, schéma dessiné et rechargé, présences, matériel, charge (360 UA prévues), évaluation, validation, exports des 6 modèles (PDF, JPEG 300 DPI, WhatsApp, ZIP, A3), modèle, duplication, pages annexes, mobile 390 px, verrouillage pour l'adjoint.
 Tests unitaires : `tests/unit/training-sheets.test.ts` ; sécurité base : bloc « Fiches de séance » de `tests/local/phase2-security.test.ts`.
 
+## Phase 3 · livraison 1 (27/11/2026)
+- `tests/unit/performance-engine.test.ts` : échelle, N/E non pénalisant, pondérations par poste, sources 20/30/50 renormalisées, seuil, fiabilité, indices d'équipe.
+- `tests/local/phase3-performance.test.ts` : référentiel initial (100 % par poste), figement des versions publiées, publication contrôlée, validation réservée et historisée, verrouillage, RLS (communication, administrateur, joueuse sans accès).
+- `tests/e2e/recette-performance.cjs` (14 étapes) : versions, notation, seuil « Données insuffisantes », IPI, radar, progression, droits de l'adjoint, mobile 390 px.
+
 ## À ajouter dans les phases suivantes
 Calcul des indices (N/E, seuils, sources), confidentialité du onze provisoire, accès clip vs vidéo source, confidentialité médicale, exports PDF/PNG, restauration de sauvegarde.

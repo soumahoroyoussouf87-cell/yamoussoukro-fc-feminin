@@ -14,6 +14,8 @@ import { DocumentActions, DocumentUpload } from "@/components/players/documents"
 import { ArchiveButton } from "@/components/players/archive-button";
 import { AvailabilityForm } from "@/components/players/availability-form";
 import { ageFrom, formatDate } from "@/lib/utils";
+import { getMinObservations, getPublishedVersion, loadObservations } from "@/lib/performance/data";
+import { aggregatePlayer, DIMENSIONS as PERF_DIMENSIONS } from "@/lib/performance/engine";
 
 export const metadata = { title: "Fiche joueuse" };
 
@@ -180,9 +182,14 @@ export default async function PlayerPage({ params, searchParams }: PageProps<"/e
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {can(ctx, "evaluations.read") ? <Profile360 playerId={id} ctx={ctx} /> : (
+          <Card>
+            <CardHeader><CardTitle className="text-sm">Profil de performance 360°</CardTitle></CardHeader>
+            <CardContent><EmptyState icon={Radar} title="Accès réservé" description={DIMENSIONS.join(" · ")} /></CardContent>
+          </Card>
+        )}
         {[
           { t: "Statistiques sportives", i: BarChart3, ph: 2, d: "Matchs, titularisations, minutes, buts, passes, cartons, présences." },
-          { t: "Profil de performance 360°", i: Radar, ph: 3, d: DIMENSIONS.join(" · ") },
           { t: "Vidéothèque individuelle", i: Video, ph: 4, d: "Séquences codifiées et playlists autorisées." },
           { t: "Plan de développement", i: Target, ph: 4, d: "Objectifs, exercices correctifs, réévaluations." },
         ].map((b) => (
@@ -196,5 +203,33 @@ export default async function PlayerPage({ params, searchParams }: PageProps<"/e
         ))}
       </div>
     </div>
+  );
+}
+
+async function Profile360({ playerId, ctx }: { playerId: string; ctx: Awaited<ReturnType<typeof requirePermission>> }) {
+  const [reference, min, { rows, versions }] = await Promise.all([getPublishedVersion(ctx), getMinObservations(ctx), loadObservations(ctx, { playerId })]);
+  const x = reference ? aggregatePlayer(rows, versions, reference, min) : null;
+  const f = (n: number | null) => (n == null ? "—" : String(n).replace(".", ","));
+  return (
+    <Card>
+      <CardHeader className="flex-row items-center justify-between">
+        <CardTitle className="text-sm">Profil de performance 360°</CardTitle>
+        <Link href={`/performance/individuelle/${playerId}?periode=tout`} className="text-xs font-semibold text-primary-text hover:underline">Ouvrir</Link>
+      </CardHeader>
+      <CardContent>
+        {!x || x.observations === 0 ? (
+          <EmptyState icon={Radar} title="Aucune évaluation validée" description={DIMENSIONS.join(" · ")} />
+        ) : (
+          <>
+            <p className="font-display text-3xl font-bold tabular-nums">{x.ipiStatus === "publie" ? `IPI ${f(x.ipi)}` : <span className="text-sm text-muted-foreground">IPI : données insuffisantes ({x.observations}/{min})</span>}</p>
+            <dl className="mt-2 grid grid-cols-2 gap-x-3 text-xs">
+              {PERF_DIMENSIONS.map((d) => (
+                <div key={d.code} className="flex justify-between border-b border-dashed py-0.5"><dt>{d.label}</dt><dd className="tabular-nums">{f(x.dims[d.code].index)}</dd></div>
+              ))}
+            </dl>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 }

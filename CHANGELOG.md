@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## [0.4.0] — 2026-11-27 — Phase 3 · livraison 1 : référentiels et évaluation individuelle
+
+### Ajouté
+- Référentiels d'évaluation versionnés (migration 010) : 6 dimensions, 92 critères (référentiel technique commun et gestes par poste, tactique, athlétique observée, cognitive, mentale, comportementale), pondérations globales et techniques des 9 postes du cahier des charges. Une version publiée est figée ; une nouvelle version se crée par copie et ne se publie que si chaque poste totalise 100 %.
+- Évaluations de match ou d'entraînement : joueuses proposées depuis la convocation ou les présences, poste réellement occupé, notes 1 à 5 ou N/E, fait observé et interprétation séparés, commentaire, sauvegarde automatique, circuit Brouillon → Soumis → Validé → Publié, verrouillage après validation, notification.
+- Moteur d'indices : N/E exclu du calcul, sources techniques 20/30/50 renormalisées, IPI pondéré par poste, seuil de publication configurable, couverture des critères et niveau de fiabilité.
+- Performance individuelle : tableau de l'effectif par période, profil 360° (radar, courbe de progression, détail des critères, historique avec évaluateur et version du référentiel).
+- Tableau de bord : indices par dimension alimentés par les évaluations validées, joueuse en focus, accès rapide « Évaluer une joueuse ». Fiche joueuse : carte « Profil de performance 360° ».
+
 ## [0.3.2] — 2026-11-27 — Affiche du onze de départ
 
 ### Ajouté

@@ -57,3 +57,11 @@ Toutes les valeurs proviennent des données saisies. « Non évalué » signifie
    - Étape 7 : noter les critères de 1 à 5 (« N.O. » si non observé) et rédiger le bilan.
 3. **Valider et exporter** (étape 8) : la liste de contrôle indique ce qui manque. Choisir un modèle, puis Aperçu, Imprimer, PDF, JPEG 300 DPI, Version WhatsApp, PNG HD, ZIP ou Partager.
 4. **Réutiliser** : « Dupliquer » vers une autre date ou « Enregistrer comme modèle ».
+
+## Performance : évaluer une joueuse (Phase 3, 27/11/2026)
+1. **Performance › Évaluations › Nouvelle évaluation** : choisissez Compétition ou Entraînement, le match ou la séance, la date.
+2. Ajoutez les joueuses (convoquées ou présentes sont proposées) et vérifiez le **poste réellement occupé** : il fixe les critères techniques et les pondérations.
+3. Cliquez **Évaluer** : notez chaque critère de 1 à 5, ou **N/E** s'il n'a pas pu être observé (N/E ne pénalise jamais). L'icône bulle ouvre « Fait observé » et « Interprétation ». Tout est enregistré automatiquement.
+4. Soumettez puis faites **Valider** (entraîneur principal ou direction sportive). Seules les évaluations validées comptent dans les indices ; une évaluation validée est verrouillée.
+5. **Performance individuelle** : IPI et indices par dimension de chaque joueuse. L'IPI s'affiche à partir de 3 évaluations validées (seuil réglable dans Référentiels).
+6. **Référentiels** : pour changer un critère ou un poids, créez une nouvelle version (copie), modifiez-la puis publiez-la. Les évaluations passées gardent leur version.

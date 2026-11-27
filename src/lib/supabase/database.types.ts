@@ -261,6 +261,186 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"evaluation_criteria": {
+                  Row: {
+                    "club_id": string,"code": string,"created_at": string,"default_weight": number | null,"description": string | null,"dimension_id": string,"id": string,"label": string,"sort_order": number,"updated_at": string,"version_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"code": string,"created_at"?: string,"default_weight"?: number | null,"description"?: string | null,"dimension_id": string,"id"?: string,"label": string,"sort_order"?: number,"updated_at"?: string,"version_id": string
+                  }
+                  Update: {
+                    "club_id"?: string,"code"?: string,"created_at"?: string,"default_weight"?: number | null,"description"?: string | null,"dimension_id"?: string,"id"?: string,"label"?: string,"sort_order"?: number,"updated_at"?: string,"version_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "evaluation_criteria_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_criteria_dimension_id_fkey"
+      columns: ["dimension_id"]
+isOneToOne: false
+      referencedRelation: "evaluation_dimensions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_criteria_version_id_fkey"
+      columns: ["version_id"]
+isOneToOne: false
+      referencedRelation: "framework_versions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"evaluation_dimensions": {
+                  Row: {
+                    "club_id": string,"code": string,"created_at": string,"description": string | null,"id": string,"label": string,"sort_order": number,"updated_at": string,"version_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"code": string,"created_at"?: string,"description"?: string | null,"id"?: string,"label": string,"sort_order"?: number,"updated_at"?: string,"version_id": string
+                  }
+                  Update: {
+                    "club_id"?: string,"code"?: string,"created_at"?: string,"description"?: string | null,"id"?: string,"label"?: string,"sort_order"?: number,"updated_at"?: string,"version_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "evaluation_dimensions_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_dimensions_version_id_fkey"
+      columns: ["version_id"]
+isOneToOne: false
+      referencedRelation: "framework_versions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"evaluation_evidence": {
+                  Row: {
+                    "club_id": string,"created_at": string,"evaluation_score_id": string,"id": string,"note": string | null,"updated_at": string,"url": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"evaluation_score_id": string,"id"?: string,"note"?: string | null,"updated_at"?: string,"url": string
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"evaluation_score_id"?: string,"id"?: string,"note"?: string | null,"updated_at"?: string,"url"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "evaluation_evidence_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_evidence_evaluation_score_id_fkey"
+      columns: ["evaluation_score_id"]
+isOneToOne: false
+      referencedRelation: "evaluation_scores"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"evaluation_frameworks": {
+                  Row: {
+                    "club_id": string,"created_at": string,"description": string | null,"id": string,"kind": string,"name": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"description"?: string | null,"id"?: string,"kind"?: string,"name": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"description"?: string | null,"id"?: string,"kind"?: string,"name"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "evaluation_frameworks_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"evaluation_scores": {
+                  Row: {
+                    "club_id": string,"created_at": string,"criterion_id": string,"fact": string | null,"id": string,"individual_evaluation_id": string,"interpretation": string | null,"score": number | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"criterion_id": string,"fact"?: string | null,"id"?: string,"individual_evaluation_id": string,"interpretation"?: string | null,"score"?: number | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"criterion_id"?: string,"fact"?: string | null,"id"?: string,"individual_evaluation_id"?: string,"interpretation"?: string | null,"score"?: number | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "evaluation_scores_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_scores_criterion_id_fkey"
+      columns: ["criterion_id"]
+isOneToOne: false
+      referencedRelation: "evaluation_criteria"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_scores_individual_evaluation_id_fkey"
+      columns: ["individual_evaluation_id"]
+isOneToOne: false
+      referencedRelation: "individual_evaluations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"evaluation_sessions": {
+                  Row: {
+                    "club_id": string,"context": string,"created_at": string,"created_by": string | null,"evaluated_on": string,"framework_version_id": string,"id": string,"match_id": string | null,"notes": string | null,"published_at": string | null,"season_id": string | null,"status": Database["public"]['Enums']["workflow_status"],"title": string,"training_session_id": string | null,"updated_at": string,"validated_at": string | null,"validated_by": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"context": string,"created_at"?: string,"created_by"?: string | null,"evaluated_on": string,"framework_version_id": string,"id"?: string,"match_id"?: string | null,"notes"?: string | null,"published_at"?: string | null,"season_id"?: string | null,"status"?: Database["public"]['Enums']["workflow_status"],"title": string,"training_session_id"?: string | null,"updated_at"?: string,"validated_at"?: string | null,"validated_by"?: string | null
+                  }
+                  Update: {
+                    "club_id"?: string,"context"?: string,"created_at"?: string,"created_by"?: string | null,"evaluated_on"?: string,"framework_version_id"?: string,"id"?: string,"match_id"?: string | null,"notes"?: string | null,"published_at"?: string | null,"season_id"?: string | null,"status"?: Database["public"]['Enums']["workflow_status"],"title"?: string,"training_session_id"?: string | null,"updated_at"?: string,"validated_at"?: string | null,"validated_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "evaluation_sessions_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_sessions_framework_version_id_fkey"
+      columns: ["framework_version_id"]
+isOneToOne: false
+      referencedRelation: "framework_versions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_sessions_match_id_fkey"
+      columns: ["match_id"]
+isOneToOne: false
+      referencedRelation: "matches"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_sessions_season_id_fkey"
+      columns: ["season_id"]
+isOneToOne: false
+      referencedRelation: "seasons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "evaluation_sessions_training_session_id_fkey"
+      columns: ["training_session_id"]
+isOneToOne: false
+      referencedRelation: "training_sessions"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"exercises": {
                   Row: {
                     "archived_at": string | null,"category": Database["public"]['Enums']["exercise_category"],"club_id": string,"coaching_points": string | null,"constraints": string | null,"corrections": string | null,"created_at": string,"created_by": string | null,"diagram_id": string | null,"diagram_path": string | null,"dimensions": string | null,"duration_min": number | null,"equipment": string | null,"id": string,"instructions": string | null,"objective": string | null,"organisation": string | null,"players_count": string | null,"progression": string | null,"realisation_criteria": string | null,"recovery": string | null,"repetitions": string | null,"series": number | null,"success_criteria": string | null,"title": string,"updated_at": string,"variables": string | null,"video_links": NonNullable<Json>,"video_url": string | null
@@ -284,6 +464,76 @@ isOneToOne: false
       columns: ["diagram_id"]
 isOneToOne: false
       referencedRelation: "tactical_diagrams"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"framework_versions": {
+                  Row: {
+                    "club_id": string,"created_at": string,"created_by": string | null,"framework_id": string,"id": string,"label": string,"notes": string | null,"published_at": string | null,"published_by": string | null,"status": string,"updated_at": string,"version_no": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"created_by"?: string | null,"framework_id": string,"id"?: string,"label": string,"notes"?: string | null,"published_at"?: string | null,"published_by"?: string | null,"status"?: string,"updated_at"?: string,"version_no": number
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"created_by"?: string | null,"framework_id"?: string,"id"?: string,"label"?: string,"notes"?: string | null,"published_at"?: string | null,"published_by"?: string | null,"status"?: string,"updated_at"?: string,"version_no"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "framework_versions_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "framework_versions_framework_id_fkey"
+      columns: ["framework_id"]
+isOneToOne: false
+      referencedRelation: "evaluation_frameworks"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"individual_evaluations": {
+                  Row: {
+                    "club_id": string,"comment": string | null,"created_at": string,"evaluation_session_id": string,"evaluator_id": string | null,"framework_key": string,"id": string,"minutes_played": number | null,"player_id": string,"position_id": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"comment"?: string | null,"created_at"?: string,"evaluation_session_id": string,"evaluator_id"?: string | null,"framework_key": string,"id"?: string,"minutes_played"?: number | null,"player_id": string,"position_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "club_id"?: string,"comment"?: string | null,"created_at"?: string,"evaluation_session_id"?: string,"evaluator_id"?: string | null,"framework_key"?: string,"id"?: string,"minutes_played"?: number | null,"player_id"?: string,"position_id"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "individual_evaluations_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "individual_evaluations_evaluation_session_id_fkey"
+      columns: ["evaluation_session_id"]
+isOneToOne: false
+      referencedRelation: "evaluation_sessions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "individual_evaluations_player_id_fkey"
+      columns: ["player_id"]
+isOneToOne: false
+      referencedRelation: "player_current_availability"
+      referencedColumns: ["player_id"]
+    },{
+      foreignKeyName: "individual_evaluations_player_id_fkey"
+      columns: ["player_id"]
+isOneToOne: false
+      referencedRelation: "players"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "individual_evaluations_position_id_fkey"
+      columns: ["position_id"]
+isOneToOne: false
+      referencedRelation: "positions"
       referencedColumns: ["id"]
     }
                   ]
@@ -857,6 +1107,64 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"position_criteria_weights": {
+                  Row: {
+                    "club_id": string,"created_at": string,"criterion_id": string,"framework_key": string,"id": string,"updated_at": string,"version_id": string,"weight": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"criterion_id": string,"framework_key": string,"id"?: string,"updated_at"?: string,"version_id": string,"weight": number
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"criterion_id"?: string,"framework_key"?: string,"id"?: string,"updated_at"?: string,"version_id"?: string,"weight"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "position_criteria_weights_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "position_criteria_weights_criterion_id_fkey"
+      columns: ["criterion_id"]
+isOneToOne: false
+      referencedRelation: "evaluation_criteria"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "position_criteria_weights_version_id_fkey"
+      columns: ["version_id"]
+isOneToOne: false
+      referencedRelation: "framework_versions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"position_dimension_weights": {
+                  Row: {
+                    "club_id": string,"created_at": string,"dimension_code": string,"framework_key": string,"id": string,"updated_at": string,"version_id": string,"weight": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"dimension_code": string,"framework_key": string,"id"?: string,"updated_at"?: string,"version_id": string,"weight": number
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"dimension_code"?: string,"framework_key"?: string,"id"?: string,"updated_at"?: string,"version_id"?: string,"weight"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "position_dimension_weights_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "position_dimension_weights_version_id_fkey"
+      columns: ["version_id"]
+isOneToOne: false
+      referencedRelation: "framework_versions"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"positions": {
                   Row: {
                     "code": string,"created_at": string,"framework_key": string,"id": string,"label": string,"line": Database["public"]['Enums']["position_line"],"sort_order": number
@@ -1366,6 +1674,9 @@ isOneToOne: false
             "bootstrap_first_admin":
 { Args: { "p_club": string,"p_email": string }; Returns: undefined
                            },
+"clone_framework_version":
+{ Args: { "p_label": string,"p_version": string }; Returns: string
+                           },
 "my_memberships":
 { Args: Record<PropertyKey, never>; Returns: {
               "club_id": string,"club_name": string,"role_code": string,"role_label": string,"team_id": string
@@ -1373,6 +1684,9 @@ isOneToOne: false
                            },
 "my_permissions":
 { Args: { "p_club": string }; Returns: string[]
+                           },
+"publish_framework_version":
+{ Args: { "p_version": string }; Returns: undefined
                            },
 "squad_confidential_comments":
 { Args: { "p_squad": string }; Returns: {

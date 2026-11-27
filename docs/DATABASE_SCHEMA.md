@@ -66,5 +66,12 @@ Fonctions ajoutées : `app.guard_workflow(perm)`, `app.track_status()`, `app.not
 
 Fonctions : `app.set_updated_by()`, `app.guard_same_club()` (phase, schéma et thème du même club / de la même séance).
 
+## Performance Framework (migration 010)
+- `evaluation_frameworks` (un référentiel individuel par club) → `framework_versions` (brouillon / publié / archivé, une seule version publiée et un seul brouillon, figée hors brouillon : triggers `guard_framework_version`, `guard_framework_children`).
+- `evaluation_dimensions` (6 codes), `evaluation_criteria` (`default_weight` = poids pour tous les postes, null = critère réservé aux postes pondérés), `position_criteria_weights` (poste × critère), `position_dimension_weights` (poste × dimension).
+- `evaluation_sessions` (contexte match / entraînement, version figée, workflow `guard_workflow('evaluations.validate')`, historique, notification) → `individual_evaluations` (joueuse, poste occupé, minutes) → `evaluation_scores` (note 1-5, null = N/E, fait observé, interprétation) → `evaluation_evidence` (lien https).
+- RPC `clone_framework_version`, `publish_framework_version` (contrôle 100 % par poste). Référentiel initial créé par `app.seed_performance_framework` pour chaque club.
+- RLS : lecture `evaluations.read` ; référentiels `frameworks.manage` ; saisie `evaluations.write` ; contenu d'une évaluation validée modifiable seulement avec `evaluations.validate`.
+
 ## Tables prévues (phases 3 à 6)
 Conformément au §45 du cahier des charges : planification, compétition complète (`match_squads`, `lineups` avec statut de workflow et historique, `match_events`, `delegations`…), tactique (`game_models`, `game_model_versions`…), performance (`evaluation_frameworks`, `framework_versions`, `position_criteria_weights`, `evaluation_scores`, `evaluation_evidence`, `performance_snapshots`…), vidéo (`videos`, `video_clips`, `clip_players`, `video_access_grants`…), développement, sport science, schéma `medical` séparé, `approval_workflows` / `approval_history`, `ai_reports` / `ai_report_sources`.

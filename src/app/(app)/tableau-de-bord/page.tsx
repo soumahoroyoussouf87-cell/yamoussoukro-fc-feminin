@@ -14,7 +14,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ClubLogo } from "@/components/shell/club-logo";
-import { formatDateTime } from "@/lib/utils";
+import { formatDate, formatDateTime } from "@/lib/utils";
+import { squadIndices } from "@/lib/performance/data";
+import { DIMENSIONS, FRAMEWORK_KEY_LABELS, teamDimensionIndices } from "@/lib/performance/engine";
+import { Radar } from "@/components/performance/charts";
 
 export const metadata = { title: "Tableau de bord" };
 
@@ -37,7 +40,7 @@ const UPCOMING = [
   { title: "Objectifs de développement", phase: 4, icon: Goal, text: "Plans de développement." },
 ];
 
-const INDICES = ["Technique", "Tactique", "Athlétique", "Cognitif", "Mental", "Comportemental", "Collectif", "Progression générale"];
+const fmtIdx = (n: number) => String(n).replace(".", ",");
 
 export default async function DashboardPage() {
   const ctx = await requirePermission("dashboard.read");
@@ -47,6 +50,21 @@ export default async function DashboardPage() {
   const unavailable = d.availability.indisponible;
   const limited = d.availability.incertaine + d.availability.restreinte;
   const maxLine = Math.max(1, ...d.lines.map((l) => l.count));
+  const perf = can(ctx, "evaluations.read") && club.season
+    ? await squadIndices(ctx, { from: club.season.starts_on, to: club.season.ends_on })
+    : null;
+  const team = perf ? teamDimensionIndices(perf.rows.map((x) => x.indices), perf.min) : null;
+  const focus = perf?.rows.filter((x) => x.indices.observations > 0).sort((a, b) => (b.indices.to ?? "").localeCompare(a.indices.to ?? ""))[0] ?? null;
+  const upcoming = focus ? UPCOMING.filter((u) => !u.title.startsWith("Joueuse en focus")) : UPCOMING;
+  const indexTiles: { label: string; value: number | null; hint: string }[] = [
+    ...DIMENSIONS.map((dim) => ({
+      label: dim.label,
+      value: team?.dims[dim.code].index ?? null,
+      hint: team?.dims[dim.code].index != null ? `${team.dims[dim.code].players} joueuse(s) · saison` : "Aucune évaluation validée au-dessus du seuil",
+    })),
+    { label: "Collectif (IPC)", value: null, hint: "Évaluation collective : livraison 3 de la Phase 3" },
+    { label: "Progression générale", value: null, hint: "Indices de développement : livraison 2 de la Phase 3" },
+  ];
 
   const quick = [
     { label: "Ajouter une joueuse", icon: UserPlus, href: can(ctx, "players.write") ? "/effectif/nouvelle" : undefined, phase: 1 },
@@ -55,7 +73,7 @@ export default async function DashboardPage() {
     { label: "Créer un match", icon: Trophy, href: can(ctx, "matches.write") ? "/competition/rencontres/nouvelle" : undefined, phase: 1 },
     { label: "Créer une convocation", icon: FileBarChart, href: can(ctx, "matches.write") ? "/competition/convocations" : undefined, phase: 1 },
     { label: "Composer le onze", icon: Shirt, href: can(ctx, "lineups.write") ? "/competition/onze-de-depart" : undefined, phase: 1 },
-    { label: "Évaluer une joueuse", icon: Target, phase: 3 },
+    { label: "Évaluer une joueuse", icon: Target, href: can(ctx, "evaluations.write") ? "/performance/evaluations/nouvelle" : undefined, phase: 3 },
     { label: "Importer une vidéo", icon: Video, phase: 4 },
     { label: "Créer un objectif", icon: Goal, phase: 4 },
     { label: "Générer un rapport", icon: FileBarChart, phase: 3 },
@@ -114,13 +132,16 @@ export default async function DashboardPage() {
       <section aria-labelledby="indices-title">
         <div className="mb-3 flex items-center justify-between">
           <h2 id="indices-title" className="font-display text-xl font-bold uppercase tracking-wide">Indices de performance</h2>
-          <Badge variant="outline">Performance Framework — Phase 3</Badge>
+          {can(ctx, "evaluations.read") ? <Link href="/performance/individuelle" className="text-sm font-semibold text-primary-text hover:underline">Performance individuelle</Link> : null}
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
-          {INDICES.map((label) => (
-            <div key={label} className="rounded-xl border bg-card p-4" title="Aucune évaluation enregistrée : l'indice n'est pas calculé.">
-              <p className="hyphens-auto text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
-              <p className="mt-1 font-display text-lg font-semibold text-muted-foreground">Non évalué</p>
+          {indexTiles.map((t) => (
+            <div key={t.label} className="rounded-xl border bg-card p-4" title={t.hint}>
+              <p className="hyphens-auto text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{t.label}</p>
+              {t.value == null
+                ? <p className="mt-1 font-display text-lg font-semibold text-muted-foreground">Non évalué</p>
+                : <p className="mt-1 font-display text-3xl font-bold tabular-nums">{fmtIdx(t.value)}</p>}
+              <p className="mt-0.5 text-[10px] text-muted-foreground">{t.hint}</p>
             </div>
           ))}
         </div>
@@ -308,6 +329,25 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
+      {focus ? (
+        <Card>
+          <CardHeader className="flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base">Joueuse en focus · {focus.player.name}</CardTitle>
+              <CardDescription>Dernière joueuse évaluée ({formatDate(focus.indices.to)}){focus.indices.frameworkKey ? ` · ${FRAMEWORK_KEY_LABELS[focus.indices.frameworkKey]}` : ""}</CardDescription>
+            </div>
+            <Link href={`/performance/individuelle/${focus.player.id}`} className="text-sm font-semibold text-primary-text hover:underline">Profil 360°</Link>
+          </CardHeader>
+          <CardContent className="grid items-center gap-4 sm:grid-cols-[minmax(0,320px)_1fr]">
+            <Radar axes={DIMENSIONS.map((dim) => ({ label: dim.label, value: focus.indices.dims[dim.code].index, n: focus.indices.dims[dim.code].n }))} size={260} />
+            <div className="text-sm">
+              <p className="font-display text-4xl font-bold tabular-nums">{focus.indices.ipi == null ? <span className="text-base text-muted-foreground">IPI : données insuffisantes ({focus.indices.observations}/{perf?.min})</span> : <>IPI {fmtIdx(focus.indices.ipi)}</>}</p>
+              <p className="text-muted-foreground">{focus.indices.observations} évaluation(s) validée(s) cette saison.</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
+
       {/* Widgets dont le module source n'est pas encore livré : signalés, sans donnée simulée */}
       <Card>
         <CardHeader className="flex-row items-center justify-between">
@@ -319,7 +359,7 @@ export default async function DashboardPage() {
         </CardHeader>
         <CardContent>
           <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-            {UPCOMING.map((w) => {
+            {upcoming.map((w) => {
               const Icon = w.icon;
               return (
                 <li key={w.title} className="flex items-start gap-3 rounded-lg border border-dashed p-3">
